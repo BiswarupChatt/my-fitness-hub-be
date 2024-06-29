@@ -3,6 +3,10 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const { checkSchema } = require('express-validator')
+
+const {userRegisterValidations} = require('./app/validations/user-validations')
+const userCtrl = require('./app/controllers/user-ctrl')
 
 const configureDB = require('./config/db')
 
@@ -19,6 +23,8 @@ app.use(cors())
 app.get('/', (req, res)=>{
     res.send('working!')
 })
+
+app.post('/users/register', checkSchema(userRegisterValidations), userCtrl.register)
 
 
 app.listen(port, ()=>{
