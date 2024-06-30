@@ -5,8 +5,10 @@ const morgan = require('morgan')
 const cors = require('cors')
 const { checkSchema } = require('express-validator')
 
-const {userRegisterValidations} = require('./app/validations/user-validations')
+
 const userCtrl = require('./app/controllers/user-ctrl')
+const {userRegisterValidations, userLoginValidations} = require('./app/validations/user-validations')
+
 
 const configureDB = require('./config/db')
 
@@ -20,11 +22,12 @@ app.use(morgan('combined'))
 app.use(cors())
  
 
-app.get('/', (req, res)=>{
-    res.send('working!')
-})
-
 app.post('/users/register', checkSchema(userRegisterValidations), userCtrl.register)
+app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
+
+
+
+
 
 
 app.listen(port, ()=>{

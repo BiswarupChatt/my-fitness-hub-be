@@ -36,7 +36,7 @@ const userRegisterValidations = {
             options: async (value) => {
                 const user = await User.findOne({ email: value })
                 if (user) {
-                    throw new error('Email Already Taken')
+                    throw new Error('Email Already Taken')
                 } else {
                     return true
                 }
@@ -61,16 +61,47 @@ const userRegisterValidations = {
     },
     role: {
         in: ['body'],
-        exists: {
-            errorMessage: "Role is required"
-        },
+        optional: true,
         notEmpty: {
             errorMessage: "Role cannot be empty"
         },
         isIn: {
             options: [['coach', 'client']],
-            errorMessage: 'role either should be a candidate or recruiter'
+            errorMessage: 'role either should be a coach or client'
         },
         trim: true
     }
 }
+
+const userLoginValidations = {
+    email: {
+        in: ['body'],
+        exists: {
+            errorMessage: "Email is required"
+        },
+        notEmpty: {
+            errorMessage: "Email cannot be empty"
+        },
+        isEmail: {
+            errorMessage: "Email Should be In valid format"
+        },
+        trim: true,
+        normalizeEmail: true
+    },
+    password: {
+        in: ['body'],
+        exists: {
+            errorMessage: "Password is required"
+        },
+        notEmpty: {
+            errorMessage: "Password cannot be empty"
+        },
+        isLength: {
+            options: { min: 8, max: 128 },
+            errorMessage: 'Password should be between 8-128 character'
+        },
+        trim: true
+    },
+}
+
+module.exports = { userRegisterValidations, userLoginValidations }
