@@ -60,22 +60,50 @@ userCtrl.login = async (req, res) => {
 }
 
 userCtrl.forgetPassword = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+
     try {
         const body = req.body
         const user = await User.findOne({ email: body.email })
         if (!user) {
             return res.status(404).json({ errors: 'Email not found' })
-        } else {
-            const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_FORGET_PASS_EXPIRE })
-            forgetPasswordMail(body.email, token)
         }
-        return res.status(200).json({ errors : "Email Sent Successfully" })
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_FORGET_PASS_EXPIRE })
+        forgetPasswordMail(body.email, token)
+
+        return res.status(200).json({ message: "Email Sent Successfully", token: token })
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
 
-// userCtrl.resetPassword = async ()
+userCtrl.resetPassword = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    try {
+        const decodedToken = jwt.verify(req.params.token, process.env.JWT_SECRET)
+        if (!decodedToken) {
+            return res.status(404).json({ errors: 'Invalid Token' })
+        }
+        const user = await User.findById(decodedToken.userId)
+        if (!user) {
+            return res.status(404).json({ errors: 'No user found' })
+        }
+        const body = req.body
+        const salt = await bcryptjs.genSalt()
+        const hashPassword = await bcryptjs.hash(body.password, salt)
+        user.password = hashPassword
+        await user.save()
+        res.status(200).json(user)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
 
 module.exports = userCtrl

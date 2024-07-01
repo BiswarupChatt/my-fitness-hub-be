@@ -116,16 +116,6 @@ const userForgetPasswordValidation = {
         isEmail: {
             errorMessage: "Email Should be In valid format"
         },
-        custom: {
-            options: async (value) => {
-                const user = await User.findOne({ email: value })
-                if (user) {
-                    throw new Error('Email Already Taken')
-                } else {
-                    return true
-                }
-            }
-        },
         trim: true,
         normalizeEmail: true
     }
