@@ -7,7 +7,7 @@ const { checkSchema } = require('express-validator')
 
 
 const userCtrl = require('./app/controllers/user-ctrl')
-const {userRegisterValidations, userLoginValidations} = require('./app/validations/user-validations')
+const {userRegisterValidations, userLoginValidations, userForgetPasswordValidation} = require('./app/validations/user-validations')
 
 
 const configureDB = require('./config/db')
@@ -24,7 +24,7 @@ app.use(cors())
 
 app.post('/users/register', checkSchema(userRegisterValidations), userCtrl.register)
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
-
+app.post('/users/forgetPassword',checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
 
 
 

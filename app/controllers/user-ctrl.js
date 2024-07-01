@@ -2,10 +2,9 @@ const User = require('../models/user-model')
 const { validationResult } = require('express-validator')
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { welcomeEmail } = require('../utility/nodeMailer')
+const { welcomeEmail, forgetPasswordMail } = require('../utility/nodeMailer')
 const userCtrl = {}
 
-// E:\DCT-Learning\my-fitness-hub\backend\utility\nodeMailer.js
 userCtrl.register = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -47,7 +46,7 @@ userCtrl.login = async (req, res) => {
                     id: user._id,
                     role: user.role
                 }
-                const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
+                const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LOGIN_EXPIRE })
                 return res.status(200).json({ token })
             } else {
                 return res.status(500).json({ errors: 'Invalid Credentials' })
@@ -60,6 +59,23 @@ userCtrl.login = async (req, res) => {
     }
 }
 
+userCtrl.forgetPassword = async (req, res) => {
+    try {
+        const body = req.body
+        const user = await User.findOne({ email: body.email })
+        if (!user) {
+            return res.status(404).json({ errors: 'Email not found' })
+        } else {
+            const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_FORGET_PASS_EXPIRE })
+            forgetPasswordMail(body.email, token)
+        }
+        return res.status(200).json({ errors : "Email Sent Successfully" })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
 
+// userCtrl.resetPassword = async ()
 
 module.exports = userCtrl
