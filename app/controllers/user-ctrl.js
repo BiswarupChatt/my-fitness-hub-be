@@ -20,7 +20,6 @@ userCtrl.coachRegister = async (req, res) => {
         const userRole = "coach"
         const user = new User({ ...body, password: hashPassword, role: userRole })
         await user.save()
-
         const newUser = await User.findOne({ email: req.body.email })
         if (newUser) {
             const coachData = {
@@ -29,8 +28,8 @@ userCtrl.coachRegister = async (req, res) => {
             const coach = new Coach(coachData)
             await coach.save()
             welcomeEmail(newUser.email)
-            res.status(201).json({user: user, coach: coach})
-        } 
+            res.status(201).json({ user: user, coach: coach })
+        }
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
     }
@@ -46,21 +45,24 @@ userCtrl.clientRegister = async (req, res) => {
         const salt = await bcryptjs.genSalt()
         const hashPassword = await bcryptjs.hash(body.password, salt)
         const userRole = "client"
+
+        const coach = await User.findById(req.params.coachId)
+        if (!coach) {
+            return res.status(400).json({ errors: 'Invalid coach ID' })
+        }
         const user = new User({ ...body, password: hashPassword, role: userRole })
         await user.save()
-
-        const newUser = await User.findOne({ email: req.body.email })
-        if (newUser) {
-            const clientData = {
-                user : newUser._id,
-                coach : req.params.coachId
-            }
-            const client = new Client(clientData)
-            await client.save()
-            welcomeEmail(newUser.email)
-            res.status(201).json({user: user, client: client})
+        const clientData = {
+            user: user._id,
+            coach: coach._id
         }
+        const client = new Client(clientData)
+        await client.save()
+        welcomeEmail(user.email)
+        res.status(201).json({ user: user, client: client })
+
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
@@ -143,11 +145,25 @@ userCtrl.resetPassword = async (req, res) => {
     }
 }
 
-userCtrl.account = async (req, res) => {
+userCtrl.getAccount = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
         const newUser = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt'])
         return res.status(201).json(newUser)
+    } catch (err) {
+        res.status(500).json({ errors: "Something went wrong" })
+    }
+}
+
+userCtrl.updateAccount = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    try {
+        const body = _.pick(req.body, ['firstName', 'lastName', 'email'])
+        const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
+        return res.status(201).json(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt']))
     } catch (err) {
         res.status(500).json({ errors: "Something went wrong" })
     }
