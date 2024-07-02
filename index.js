@@ -9,6 +9,8 @@ const { checkSchema } = require('express-validator')
 const userCtrl = require('./app/controllers/user-ctrl')
 const { userRegisterValidations, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
+const authorizeUser = require('./app/middlewares/authorizeUser')
+const authenticateUser = require('./app/middlewares/authenticateUser')
 
 const configureDB = require('./config/db')
 
@@ -26,7 +28,7 @@ app.post('/users/register', checkSchema(userRegisterValidations), userCtrl.regis
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
 app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
 app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)
-
+app.get('/users/account', authenticateUser, userCtrl.account)
 
 
 

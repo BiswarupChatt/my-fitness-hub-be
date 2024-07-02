@@ -1,4 +1,5 @@
 const User = require('../models/user-model')
+const _ = require('lodash')
 const { validationResult } = require('express-validator')
 const bcryptjs = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -104,6 +105,16 @@ userCtrl.resetPassword = async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
+userCtrl.account = async (req, res) => {
+    try{
+        const user = await User.findById(req.user.id)
+        const newUser = _.pick(user, ['_id', 'firstName' , 'lastName', 'email', 'role','createdAt', 'updatedAt' ])
+        return res.status(201).json(newUser)
+    }catch(err){
+        res.status(500).json({errors: "Something went wrong"})
     }
 }
 
