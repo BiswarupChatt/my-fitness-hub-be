@@ -121,4 +121,21 @@ const userForgetPasswordValidation = {
     }
 }
 
-module.exports = { userRegisterValidations, userLoginValidations, userForgetPasswordValidation }
+const resetPasswordValidations = {
+    password: {
+        in: ['body'],
+        exists: {
+            errorMessage: "Password is required"
+        },
+        notEmpty: {
+            errorMessage: "Password cannot be empty"
+        },
+        isLength: {
+            options: { min: 8, max: 128 },
+            errorMessage: 'Password should be between 8-128 character'
+        },
+        trim: true
+    }
+}
+
+module.exports = { userRegisterValidations, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations }

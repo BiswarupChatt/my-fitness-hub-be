@@ -20,7 +20,7 @@ const welcomeEmail = (userEmail) => {
                 <head>
                     <style>
                         h1 {color: green; text-align: center; }
-                        p {font - size: 16px; color: #333; }
+                        p {font-size: 16px; color: #333; }
                         .highlight {font-weight: bold; color: #d9534f; }
                     </style>
                 </head>
