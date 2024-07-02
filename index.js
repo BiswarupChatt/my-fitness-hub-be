@@ -24,7 +24,8 @@ app.use(morgan('combined'))
 app.use(cors())
 
 
-app.post('/users/register', checkSchema(userRegisterValidations), userCtrl.register)
+app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)
+app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
 app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
 app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)

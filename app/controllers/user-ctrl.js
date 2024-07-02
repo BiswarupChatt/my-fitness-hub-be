@@ -1,4 +1,6 @@
 const User = require('../models/user-model')
+const Client = require('../models/client-model')
+const Coach = require('../models/coach-model')
 const _ = require('lodash')
 const { validationResult } = require('express-validator')
 const bcryptjs = require('bcryptjs')
@@ -6,7 +8,7 @@ const jwt = require('jsonwebtoken')
 const { welcomeEmail, forgetPasswordMail } = require('../utility/nodeMailer')
 const userCtrl = {}
 
-userCtrl.register = async (req, res) => {
+userCtrl.coachRegister = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
@@ -21,15 +23,48 @@ userCtrl.register = async (req, res) => {
 
         const newUser = await User.findOne({ email: req.body.email })
         if (newUser) {
+            const coachData = {
+                user: newUser._id
+            }
+            const coach = new Coach(coachData)
+            await coach.save()
             welcomeEmail(newUser.email)
-        } else {
-            return res.status(400).json({ errors: 'New user not found' })
-        }
-        res.status(201).json(user)
+            res.status(201).json({user: user, coach: coach})
+        } 
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
+
+userCtrl.clientRegister = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    try {
+        const body = req.body
+        const salt = await bcryptjs.genSalt()
+        const hashPassword = await bcryptjs.hash(body.password, salt)
+        const userRole = "client"
+        const user = new User({ ...body, password: hashPassword, role: userRole })
+        await user.save()
+
+        const newUser = await User.findOne({ email: req.body.email })
+        if (newUser) {
+            const clientData = {
+                user : newUser._id,
+                coach : req.params.coachId
+            }
+            const client = new Client(clientData)
+            await client.save()
+            welcomeEmail(newUser.email)
+            res.status(201).json({user: user, client: client})
+        }
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 
 userCtrl.login = async (req, res) => {
     const errors = validationResult(req)
@@ -109,12 +144,12 @@ userCtrl.resetPassword = async (req, res) => {
 }
 
 userCtrl.account = async (req, res) => {
-    try{
+    try {
         const user = await User.findById(req.user.id)
-        const newUser = _.pick(user, ['_id', 'firstName' , 'lastName', 'email', 'role','createdAt', 'updatedAt' ])
+        const newUser = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt'])
         return res.status(201).json(newUser)
-    }catch(err){
-        res.status(500).json({errors: "Something went wrong"})
+    } catch (err) {
+        res.status(500).json({ errors: "Something went wrong" })
     }
 }
 

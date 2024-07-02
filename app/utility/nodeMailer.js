@@ -19,7 +19,7 @@ const welcomeEmail = (userEmail) => {
             <html>
                 <head>
                     <style>
-                        h1 {color: green; text-align: center; }
+                        h1 {color: green;}
                         p {font-size: 16px; color: #333; }
                         .highlight {font-weight: bold; color: #d9534f; }
                     </style>
@@ -67,6 +67,7 @@ const forgetPasswordMail = (email, token) => {
                     </div>
                     <p class="note">The link will expire in 10 minutes.</p>
                     <p class="note">If you didn't request a password reset, please ignore this email.</p>
+                    <p>Best Regards,<br />The My Fitness Hub Team</p>
                 </body>
             </html>
             `

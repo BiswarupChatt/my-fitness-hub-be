@@ -10,6 +10,6 @@ const userSchema = new Schema({
     profileImage: String,
 }, { timestamps: true })
 
-const User = model('User', userSchema)
+const User = model('user', userSchema)
 
 module.exports = User
