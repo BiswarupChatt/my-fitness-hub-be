@@ -1,13 +1,15 @@
-const User = require('../models/user-model')
-const Client = require('../models/client-model')
-const Coach = require('../models/coach-model')
-const _ = require('lodash')
-const { validationResult } = require('express-validator')
-const bcryptjs = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const { welcomeEmail, forgetPasswordMail } = require('../utility/nodeMailer')
 const userCtrl = {}
+const _ = require('lodash')
+const jwt = require('jsonwebtoken')
+const bcryptjs = require('bcryptjs')
+const User = require('../models/user-model')
+const Coach = require('../models/coach-model')
+const Client = require('../models/client-model')
+const { validationResult } = require('express-validator')
+const uploadToCloudinary = require('../utility/cloudinary')
+const { welcomeEmail, forgetPasswordMail } = require('../utility/nodeMailer')
 
+// Registering as a coach
 userCtrl.coachRegister = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -34,7 +36,10 @@ userCtrl.coachRegister = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
+// End Of Registering as a coach
 
+
+// Registering as a client
 userCtrl.clientRegister = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -66,8 +71,10 @@ userCtrl.clientRegister = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
+// End Of Registering as a client
 
 
+// Login 
 userCtrl.login = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -96,7 +103,10 @@ userCtrl.login = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
+// End Of Login 
 
+
+// Forget Password
 userCtrl.forgetPassword = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -118,7 +128,10 @@ userCtrl.forgetPassword = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
+// End Of Forget Password
 
+
+// Reset Password
 userCtrl.resetPassword = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -144,17 +157,23 @@ userCtrl.resetPassword = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
+// End Of Reset Password
 
+
+// Getting Account Details
 userCtrl.getAccount = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
-        const newUser = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt'])
+        const newUser = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'profileImage', 'createdAt', 'updatedAt'])
         return res.status(201).json(newUser)
     } catch (err) {
         res.status(500).json({ errors: "Something went wrong" })
     }
 }
+// End Of Getting Account Details
 
+
+// Updating Account Details
 userCtrl.updateAccount = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -168,5 +187,32 @@ userCtrl.updateAccount = async (req, res) => {
         res.status(500).json({ errors: "Something went wrong" })
     }
 }
+// End Of Updating Account Details
+
+
+// Updating Profile Image
+userCtrl.profileImageUpdate = async (req, res) => {
+    try {
+        if (req.file) {
+            const body = _.pick(req.body, ['profileImage'])
+            const uploadOptions = {
+                folder: 'my-fitness-hub/userProfileImage',
+                quality: 'auto',
+                transformation: [
+                    { width: 200, height: 200, crop: 'fit', gravity: 'center' }
+                ]
+            }
+            const result = await uploadToCloudinary(req.file.buffer, uploadOptions)
+            body.profileImage = result.secure_url
+            const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
+            return res.status(201).json(_.pick(user, ["_id", "profileImage"]))
+        } else {
+            return res.status(500).json({ errors: "Unable to find image" })
+        }
+    } catch (err) {
+        res.status(500).json({ errors: "Something went wrong" })
+    }
+}
+// End Of Updating Profile Image
 
 module.exports = userCtrl

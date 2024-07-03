@@ -7,10 +7,12 @@ const { checkSchema } = require('express-validator')
 
 
 const userCtrl = require('./app/controllers/user-ctrl')
+
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
 const authorizeUser = require('./app/middlewares/authorizeUser')
 const authenticateUser = require('./app/middlewares/authenticateUser')
+const upload = require('./app/middlewares/multer')
 
 const configureDB = require('./config/db')
 
@@ -26,11 +28,12 @@ app.use(cors())
 
 app.get('/users/account', authenticateUser, userCtrl.getAccount)
 app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)
-app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)
-app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
+app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileImage'), userCtrl.profileImageUpdate)
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
 app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
+app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)
 app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)
+app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
 
 
 
