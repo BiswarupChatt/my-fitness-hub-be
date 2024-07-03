@@ -12,14 +12,14 @@ const coachSchema = new Schema({
         ref: "User"
     },
     phoneNumber: Number, 
-    dateOfBirth: Number, 
+    dateOfBirth: Date, 
     gender: String,
     weight: Number, 
     height: Number, 
     bankDetails: {
-        accName: { type: String, default: '' },
-        accNumber: { type: String, default: '' },
-        ifscCode: { type: String, default: '' }
+        accName:  String,
+        accNumber: String,
+        ifscCode:  String
     }
 })
 

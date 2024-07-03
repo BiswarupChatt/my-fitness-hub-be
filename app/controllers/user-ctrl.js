@@ -36,8 +36,6 @@ userCtrl.coachRegister = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-// End Of Registering as a coach
-
 
 // Registering as a client
 userCtrl.clientRegister = async (req, res) => {
@@ -71,8 +69,6 @@ userCtrl.clientRegister = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-// End Of Registering as a client
-
 
 // Login 
 userCtrl.login = async (req, res) => {
@@ -103,8 +99,6 @@ userCtrl.login = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-// End Of Login 
-
 
 // Forget Password
 userCtrl.forgetPassword = async (req, res) => {
@@ -128,8 +122,6 @@ userCtrl.forgetPassword = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-// End Of Forget Password
-
 
 // Reset Password
 userCtrl.resetPassword = async (req, res) => {
@@ -157,8 +149,6 @@ userCtrl.resetPassword = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-// End Of Reset Password
-
 
 // Getting Account Details
 userCtrl.getAccount = async (req, res) => {
@@ -170,8 +160,6 @@ userCtrl.getAccount = async (req, res) => {
         res.status(500).json({ errors: "Something went wrong" })
     }
 }
-// End Of Getting Account Details
-
 
 // Updating Account Details
 userCtrl.updateAccount = async (req, res) => {
@@ -187,8 +175,6 @@ userCtrl.updateAccount = async (req, res) => {
         res.status(500).json({ errors: "Something went wrong" })
     }
 }
-// End Of Updating Account Details
-
 
 // Updating Profile Image
 userCtrl.profileImageUpdate = async (req, res) => {
@@ -213,6 +199,5 @@ userCtrl.profileImageUpdate = async (req, res) => {
         res.status(500).json({ errors: "Something went wrong" })
     }
 }
-// End Of Updating Profile Image
 
 module.exports = userCtrl

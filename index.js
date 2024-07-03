@@ -7,8 +7,10 @@ const { checkSchema } = require('express-validator')
 
 
 const userCtrl = require('./app/controllers/user-ctrl')
+const coachCtrl = require('./app/controllers/coach-ctrl')
 
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
+const { coachUpdateValidation } = require('./app/validations/coach-validations')
 
 const authorizeUser = require('./app/middlewares/authorizeUser')
 const authenticateUser = require('./app/middlewares/authenticateUser')
@@ -35,6 +37,8 @@ app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl
 app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)
 app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
 
+
+app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachUpdateValidation), coachCtrl.update)
 
 
 
