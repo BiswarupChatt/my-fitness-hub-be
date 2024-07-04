@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const {Schema, model} = mongoose
+// const User = require('./user-model')
 
 
 const coachSchema = new Schema({
@@ -23,6 +24,6 @@ const coachSchema = new Schema({
     }
 })
 
-const Coach = model('coach', coachSchema)
+const Coach = model('Coach', coachSchema)
 
 module.exports = Coach

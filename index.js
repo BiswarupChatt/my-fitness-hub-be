@@ -40,9 +40,12 @@ app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), u
 app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
 
 
+app.get('/coach', authenticateUser, authorizeUser(['coach']), coachCtrl.get)
 app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachUpdateValidation), coachCtrl.update)
+app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
 
 app.put('/client', authenticateUser, authorizeUser(['client']), checkSchema(clientUpdateValidations), clientCtrl.update)
+app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.get)
 
 
 
