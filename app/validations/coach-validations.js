@@ -1,19 +1,10 @@
 
 // const Coach = require('../models/coach-model')
 
+
+
 const coachUpdateValidation = {
-    // isVerified: {
-    //     in: ['body'],
-    //     isBoolean:{
-    //         errorMessage: "IsVerified must be a Boolean Value"
-    //     }
-    // },
-    // user: {
-    //     in: ['body'],
-    //     isMongoId:{
-    //         errorMessage: "user must be a valid Mongo ID"
-    //     }
-    // },
+    
     phoneNumber: {
         in: ['body'],
         isMobilePhone:{

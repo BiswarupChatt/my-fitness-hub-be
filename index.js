@@ -8,9 +8,11 @@ const { checkSchema } = require('express-validator')
 
 const userCtrl = require('./app/controllers/user-ctrl')
 const coachCtrl = require('./app/controllers/coach-ctrl')
+const clientCtrl = require('./app/controllers/client-ctrl')
 
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
+const { clientUpdateValidations } = require('./app/validations/client-validations')
 
 const authorizeUser = require('./app/middlewares/authorizeUser')
 const authenticateUser = require('./app/middlewares/authenticateUser')
@@ -39,6 +41,10 @@ app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations)
 
 
 app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachUpdateValidation), coachCtrl.update)
+
+app.put('/client', authenticateUser, authorizeUser(['client']), checkSchema(clientUpdateValidations), clientCtrl.update)
+
+
 
 
 

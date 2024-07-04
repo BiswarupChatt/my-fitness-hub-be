@@ -49,7 +49,7 @@ userCtrl.clientRegister = async (req, res) => {
         const hashPassword = await bcryptjs.hash(body.password, salt)
         const userRole = "client"
 
-        const coach = await User.findById(req.params.coachId)
+        const coach = await Coach.findOne({ user: req.params.coachId })
         if (!coach) {
             return res.status(400).json({ errors: 'Invalid coach ID' })
         }
