@@ -32,20 +32,23 @@ app.use(cors())
 
 app.get('/users/account', authenticateUser, userCtrl.getAccount)
 app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)
-app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileImage'), userCtrl.profileImageUpdate)
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
-app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
 app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)
-app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)
 app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
+app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
+app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)
+app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileImage'), userCtrl.profileImageUpdate)
 
 
-app.get('/coach', authenticateUser, authorizeUser(['coach']), coachCtrl.get)
+app.get('/coach', authenticateUser, authorizeUser(['coach']), coachCtrl.getMy)
 app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachUpdateValidation), coachCtrl.update)
+app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach']), coachCtrl.getAllCLient)
 app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
 
+
+
 app.put('/client', authenticateUser, authorizeUser(['client']), checkSchema(clientUpdateValidations), clientCtrl.update)
-app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.get)
+app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.getMy)
 
 
 

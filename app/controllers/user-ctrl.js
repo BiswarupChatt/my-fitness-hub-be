@@ -57,7 +57,7 @@ userCtrl.clientRegister = async (req, res) => {
         await user.save()
         const clientData = {
             user: user._id,
-            coach: coach._id
+            coach: coach.user
         }
         const client = new Client(clientData)
         await client.save()

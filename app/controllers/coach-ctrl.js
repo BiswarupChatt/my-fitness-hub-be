@@ -1,16 +1,24 @@
 const Coach = require('../models/coach-model')
-const User = require('../models/user-model')
 const _ = require('lodash')
 const { validationResult } = require('express-validator')
+const Client = require('../models/client-model')
 
 const coachCtrl = {}
 
-coachCtrl.get = async (req, res) => {
+coachCtrl.getMy = async (req, res) => {
     try {
-        const coach = await Coach.find({ user: req.user.id }).populate("user", )
+        const coach = await Coach.find({ user: req.user.id }).populate("user")
         return res.status(200).json(coach)
     } catch (err) {
-        console.log(err)
+        res.status(500).json({ errors: "Something went wrong" })
+    }
+}
+
+coachCtrl.getAllCLient = async (req, res) => {
+    try {
+        const client = await Client.find({ coach: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
+        return res.status(201).json(client)
+    } catch (err) {
         res.status(500).json({ errors: "Something went wrong" })
     }
 }
