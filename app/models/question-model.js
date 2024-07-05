@@ -6,12 +6,10 @@ const questionSchema = new Schema({
     isDefault: {
         type: Boolean,
         default: false,
-        required: true
     },
     coach: {
-        types: Schema.Types.ObjectId,
-        ref: "User",
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: "User"
     }
 })
 
