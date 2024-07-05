@@ -14,7 +14,7 @@ const questionCtrl = require('./app/controllers/question-ctrl')
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
-const {questionValidation} = require('./app/validations/question-validations')
+const { questionValidation } = require('./app/validations/question-validations')
 
 const authorizeUser = require('./app/middlewares/authorizeUser')
 const authenticateUser = require('./app/middlewares/authenticateUser')
@@ -44,8 +44,8 @@ app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileIma
 
 app.get('/coach', authenticateUser, authorizeUser(['coach']), coachCtrl.getMy)
 app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachUpdateValidation), coachCtrl.update)
-app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach']), coachCtrl.getAllCLient) 
-app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coach']), coachCtrl.getSingleCLient) 
+app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach']), coachCtrl.getAllCLient)
+app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coach']), coachCtrl.getSingleCLient)
 app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
 
 
@@ -55,6 +55,10 @@ app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.getMy
 
 
 app.post('/question', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.create)
+app.get('/question/:coachId', authenticateUser, questionCtrl.get)
+app.get('/question/default', authenticateUser, questionCtrl.getDefault)
+app.put('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.update)
+app.delete('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.delete)
 
 
 
