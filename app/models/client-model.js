@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 
-const ClientSchema = new Schema({
+const clientSchema = new Schema({
     user : {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -19,6 +19,6 @@ const ClientSchema = new Schema({
     height  : Number,
 }, {timestamps: true})
 
-const Client = model('Client', ClientSchema)
+const Client = model('Client', clientSchema)
 
 module.exports = Client
