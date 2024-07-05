@@ -1,24 +1,25 @@
 require('dotenv').config()
 
-const express = require('express')
-const morgan = require('morgan')
 const cors = require('cors')
+const morgan = require('morgan')
+const express = require('express')
 const { checkSchema } = require('express-validator')
-
 
 const userCtrl = require('./app/controllers/user-ctrl')
 const coachCtrl = require('./app/controllers/coach-ctrl')
 const clientCtrl = require('./app/controllers/client-ctrl')
+const answerCtrl = require('./app/controllers/answer-ctrl')
 const questionCtrl = require('./app/controllers/question-ctrl')
 
-const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
+const { questionValidation } = require('./app/validations/question-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
-const { questionValidation } = require('./app/validations/question-validations')
+const {answerValidations} =require('./app/validations/answer-validations')
+const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
+const upload = require('./app/middlewares/multer')
 const authorizeUser = require('./app/middlewares/authorizeUser')
 const authenticateUser = require('./app/middlewares/authenticateUser')
-const upload = require('./app/middlewares/multer')
 
 const configureDB = require('./config/db')
 
@@ -49,7 +50,6 @@ app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coac
 app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
 
 
-
 app.put('/client', authenticateUser, authorizeUser(['client']), checkSchema(clientUpdateValidations), clientCtrl.update)
 app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.getMy)
 
@@ -61,6 +61,7 @@ app.put('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), c
 app.delete('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.delete)
 
 
+app.post('/answer' ,authenticateUser, authorizeUser(['client']), checkSchema(answerValidations), answerCtrl.create)
 
 
 
