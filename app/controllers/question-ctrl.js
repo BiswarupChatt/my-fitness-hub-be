@@ -1,4 +1,3 @@
-const { errorMonitor } = require('nodemailer/lib/xoauth2')
 const Question = require('../models/question-model')
 const { validationResult } = require('express-validator')
 

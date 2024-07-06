@@ -9,8 +9,10 @@ const userCtrl = require('./app/controllers/user-ctrl')
 const coachCtrl = require('./app/controllers/coach-ctrl')
 const clientCtrl = require('./app/controllers/client-ctrl')
 const answerCtrl = require('./app/controllers/answer-ctrl')
+const workoutCtrl = require('./app/controllers/workout-ctrl')
 const questionCtrl = require('./app/controllers/question-ctrl')
 
+const { workoutValidation } = require('./app/validations/workout-validations')
 const { questionValidation } = require('./app/validations/question-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
@@ -67,6 +69,7 @@ app.get('/answer/:clientId', authenticateUser, authorizeUser(['coach', 'admin'])
 app.put('/answer/:_id', authenticateUser, authorizeUser(['client']), checkSchema(answerUpdateValidations), answerCtrl.update)
 app.delete('/answer/:_id', authenticateUser, authorizeUser(['client']), answerCtrl.delete)
 
+app.post('/workout', authenticateUser, authorizeUser(['coach']), checkSchema(workoutValidation), workoutCtrl.create)
 
 
 
