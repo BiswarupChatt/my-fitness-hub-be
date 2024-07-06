@@ -42,7 +42,6 @@ questionCtrl.getDefault = async (req, res) => {
     }
 }
 
-
 questionCtrl.get = async (req, res) => {
     try {
         const question = await Question.find({ coach: req.params.coachId }).populate("coach", "_id firstName lastName email role")
@@ -61,10 +60,10 @@ questionCtrl.update = async (req, res) => {
     try {
         const question = await Question.findById(req.params._id)
         if (!question) {
-            res.status(404).json({ errors: "Question not found" })
+            return res.status(404).json({ errors: "Question not found" })
         }
         if (req.user.id.toString() !== question.coach._id.toString()) {
-            res.status(404).json({ errors: "you are not authorized to update" })
+            return res.status(404).json({ errors: "you are not authorized to update" })
         }
         const updatedQuestion = await Question.findByIdAndUpdate(req.params._id, req.body, { new: true })
         res.status(201).json(updatedQuestion)
@@ -81,7 +80,7 @@ questionCtrl.delete = async (req, res) => {
         }
         if (req.user.id.toString() !== question.coach._id.toString()) {
             res.status(404).json({ errors: "you are not authorized to update" })
-        } 
+        }
         const deletedQuestion = await Question.findByIdAndDelete(req.params._id)
         res.status(201).json(deletedQuestion)
     } catch (err) {

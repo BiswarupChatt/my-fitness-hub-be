@@ -14,7 +14,7 @@ const questionCtrl = require('./app/controllers/question-ctrl')
 const { questionValidation } = require('./app/validations/question-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
-const {answerValidations} =require('./app/validations/answer-validations')
+const { answerValidations, answerUpdateValidations } = require('./app/validations/answer-validations')
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
 const upload = require('./app/middlewares/multer')
@@ -61,8 +61,11 @@ app.put('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), c
 app.delete('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.delete)
 
 
-app.post('/answer' ,authenticateUser, authorizeUser(['client']), checkSchema(answerValidations), answerCtrl.create)
-app.get('/answer' ,authenticateUser, authorizeUser(['client']), answerCtrl.getMyAnswer)
+app.post('/answer', authenticateUser, authorizeUser(['client']), checkSchema(answerValidations), answerCtrl.create)
+app.get('/answer', authenticateUser, authorizeUser(['client']), answerCtrl.getMyAnswer)
+app.get('/answer/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), answerCtrl.getClientAnswer)
+app.put('/answer/:_id', authenticateUser, authorizeUser(['client']), checkSchema(answerUpdateValidations), answerCtrl.update)
+app.delete('/answer/:_id', authenticateUser, authorizeUser(['client']), answerCtrl.delete)
 
 
 

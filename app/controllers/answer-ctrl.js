@@ -41,7 +41,7 @@ answerCtrl.create = async (req, res) => {
 
 answerCtrl.getMyAnswer = async (req, res) => {
     try {
-        const answer = await Answer.find({ client: req.user.id }).populate('question')
+        const answer = await Answer.find({ client: req.user.id }).populate('question client')
         return res.status(201).json(answer)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
@@ -50,8 +50,50 @@ answerCtrl.getMyAnswer = async (req, res) => {
 
 answerCtrl.getClientAnswer = async (req, res) => {
     try {
-        const answer = await Answer.find({ client: req.params.clientId }).populate('question')
+        const answer = await Answer.find({ client: req.params.clientId }).populate('question client')
         return res.status(201).json(answer)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
+answerCtrl.update = async (req, res) => {
+    try {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
+
+        const answer = await Answer.findById(req.params._id)
+        if (!answer) {
+            return res.status(404).json({ errors: "answer not found" })
+        }
+        if (req.user.id.toString() !== answer.client._id.toString()) {
+            return res.status(404).json({ errors: "you are not authorized to update" })
+        }
+        const updatedAnswer = await Answer.findByIdAndUpdate(req.params._id, { answer: req.body.answer }, { new: true })
+        res.status(201).json(updatedAnswer)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
+answerCtrl.delete = async (req, res) => {
+    try {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
+
+        const answer = await Answer.findById(req.params._id)
+        if (!answer) {
+            return res.status(404).json({ errors: "answer not found" })
+        }
+        if (req.user.id.toString() !== answer.client._id.toString()) {
+            return res.status(404).json({ errors: "you are not authorized to update" })
+        }
+        const deletedAnswer = await Answer.findByIdAndDelete(req.params._id)
+        res.status(201).json(deletedAnswer)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
     }

@@ -24,4 +24,17 @@ const answerValidations = {
     }
 }
 
-module.exports = {answerValidations}
+const answerUpdateValidations = {
+    answer: {
+        in: ['body'],
+        exists: {
+            errorMessage: "Answer is required"
+        },
+        notEmpty: {
+            errorMessage: "Answer cannot be empty"
+        },
+        trim: true
+    }
+}
+
+module.exports = { answerValidations, answerUpdateValidations }
