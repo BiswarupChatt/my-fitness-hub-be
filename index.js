@@ -55,13 +55,14 @@ app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.getMy
 
 
 app.post('/question', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.create)
+app.get('/question', authenticateUser, questionCtrl.getDefault)
 app.get('/question/:coachId', authenticateUser, questionCtrl.get)
-app.get('/question/default', authenticateUser, questionCtrl.getDefault)
 app.put('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.update)
 app.delete('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.delete)
 
 
 app.post('/answer' ,authenticateUser, authorizeUser(['client']), checkSchema(answerValidations), answerCtrl.create)
+app.get('/answer' ,authenticateUser, authorizeUser(['client']), answerCtrl.getMyAnswer)
 
 
 

@@ -1,3 +1,4 @@
+const { errorMonitor } = require('nodemailer/lib/xoauth2')
 const Question = require('../models/question-model')
 const { validationResult } = require('express-validator')
 
@@ -36,6 +37,7 @@ questionCtrl.getDefault = async (req, res) => {
         const question = await Question.find({ isDefault: true }).populate("coach", "_id firstName lastName email role")
         res.status(201).json(question)
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
@@ -46,6 +48,7 @@ questionCtrl.get = async (req, res) => {
         const question = await Question.find({ coach: req.params.coachId }).populate("coach", "_id firstName lastName email role")
         res.status(201).json(question)
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
