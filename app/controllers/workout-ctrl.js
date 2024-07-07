@@ -80,4 +80,20 @@ workoutCtrl.update = async (req, res) => {
     }
 }
 
+workoutCtrl.delete = async (req, res) => {
+    try {
+        const workout = await Workout.findById(req.params._id)
+        if (!workout) {
+            return res.status(404).json({ errors: "Workout not found" })
+        }
+        if (req.user.id.toString() !== workout.coach._id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to delete" })
+        }
+        const deletedWorkout = await Workout.findByIdAndDelete(req.params._id)
+        res.status(201).json(deletedWorkout)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 module.exports = workoutCtrl

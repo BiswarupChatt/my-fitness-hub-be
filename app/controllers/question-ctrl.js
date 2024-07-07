@@ -78,7 +78,7 @@ questionCtrl.delete = async (req, res) => {
             res.status(404).json({ errors: "Question not found" })
         }
         if (req.user.id.toString() !== question.coach._id.toString()) {
-            res.status(404).json({ errors: "you are not authorized to update" })
+            res.status(404).json({ errors: "you are not authorized to delete" })
         }
         const deletedQuestion = await Question.findByIdAndDelete(req.params._id)
         res.status(201).json(deletedQuestion)

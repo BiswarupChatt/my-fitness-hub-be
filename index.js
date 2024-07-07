@@ -72,6 +72,7 @@ app.delete('/answer/:_id', authenticateUser, authorizeUser(['client']), answerCt
 app.post('/workout', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.create)
 app.get('/workout/:coachId?', authenticateUser, workoutCtrl.get)
 app.put('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.update)
+app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), workoutCtrl.delete)
 
 
 app.listen(port, () => {
