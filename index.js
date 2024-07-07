@@ -69,8 +69,9 @@ app.get('/answer/:clientId', authenticateUser, authorizeUser(['coach', 'admin'])
 app.put('/answer/:_id', authenticateUser, authorizeUser(['client']), checkSchema(answerUpdateValidations), answerCtrl.update)
 app.delete('/answer/:_id', authenticateUser, authorizeUser(['client']), answerCtrl.delete)
 
-app.post('/workout', authenticateUser, authorizeUser(['coach']), checkSchema(workoutValidation), workoutCtrl.create)
-
+app.post('/workout', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.create)
+app.get('/workout/:coachId?', authenticateUser, workoutCtrl.get)
+app.put('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.update)
 
 
 app.listen(port, () => {

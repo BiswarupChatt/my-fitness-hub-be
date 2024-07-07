@@ -62,7 +62,7 @@ questionCtrl.update = async (req, res) => {
             return res.status(404).json({ errors: "Question not found" })
         }
         if (req.user.id.toString() !== question.coach._id.toString()) {
-            return res.status(404).json({ errors: "you are not authorized to update" })
+            return res.status(404).json({ errors: "You are not authorized to update" })
         }
         const updatedQuestion = await Question.findByIdAndUpdate(req.params._id, req.body, { new: true })
         res.status(201).json(updatedQuestion)
