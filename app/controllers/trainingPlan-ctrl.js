@@ -1,4 +1,4 @@
-const TrainingPlan = require('../models/workoutPlan-model')
+const TrainingPlan = require('../models/trainingPlan-model')
 const Client = require('../models/client-model')
 const { validationResult } = require('express-validator')
 const { v4: uuidv4 } = require('uuid')
