@@ -1,5 +1,5 @@
 
-const workoutPlanValidations = {
+const trainingPlanValidations = {
     additionalNotes: {
         in: ['body'],
         optional: true,
@@ -7,13 +7,13 @@ const workoutPlanValidations = {
             errorMessage: 'Additional notes must be a string'
         }
     },
-    'workoutPlans': {
+    'workoutSessions': {
         in: ['body'],
         isArray: {
-            errorMessage: 'Workout plans must be an array'
+            errorMessage: 'Workout sessions must be an array'
         }
     },
-    'workoutPlans.*.title': {
+    'workoutSessions.*.title': {
         in: ['body'],
         exists: {
             errorMessage: "Title is Required"
@@ -23,21 +23,21 @@ const workoutPlanValidations = {
         },
         trim: true
     },
-    'workoutPlans.*.workouts': {
+    'workoutSessions.*.exercises': {
         in: ['body'],
         optional: true,
         isArray: {
             errorMessage: 'Workout plans must be an array'
         }
     },
-    'workoutPlans.*.workouts.*.workout': {
+    'workoutSessions.*.exercises.*.workout': {
         in: ['body'],
         optional: true,
         isMongoId: {
             errorMessage: "Workout must be a valid Mongo ID"
         },
     },
-    'workoutPlans.*.workouts.*.sets': {
+    'workoutSessions.*.exercises.*.sets': {
         in: ['body'],
         optional: true,
         isInt: {
@@ -45,7 +45,7 @@ const workoutPlanValidations = {
             errorMessage: 'Sets must be a positive integer'
         }
     },
-    'workoutPlans.*.workouts.*.rest': {
+    'workoutSessions.*.exercises.*.rest': {
         in: ['body'],
         optional: true,
         isInt: {
@@ -53,7 +53,7 @@ const workoutPlanValidations = {
             errorMessage: 'Rest must be a positive integer'
         }
     },
-    'workoutPlans.*.workouts.*.note': {
+    'workoutSessions.*.exercises.*.note': {
         in: ['body'],
         optional: true,
         isString: {
@@ -63,4 +63,4 @@ const workoutPlanValidations = {
 
 }
 
-module.exports = { workoutPlanValidations }
+module.exports = { trainingPlanValidations }

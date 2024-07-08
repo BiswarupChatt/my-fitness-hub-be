@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 
-const workoutSchema = new Schema({
+const exerciseSchema = new Schema({
     workout: {
         type: Schema.Types.ObjectId,
         ref: "Workout",
@@ -25,7 +25,7 @@ const workoutSchema = new Schema({
     }
 }, { _id: false })
 
-const workoutPlanEntrySchema = new Schema({
+const workoutSessionSchema = new Schema({
     id: {
         type: String,
         required: true
@@ -34,10 +34,10 @@ const workoutPlanEntrySchema = new Schema({
         type: String,
         required: true
     },
-    workouts: [workoutSchema]
-}, { _id: false })
+    exercises: [exerciseSchema]
+}, { timestamps: true, _id: false })
 
-const workoutPlanSchema = new Schema({
+const trainingPlanSchema = new Schema({
     client: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -52,46 +52,11 @@ const workoutPlanSchema = new Schema({
         type: String,
         required: false
     },
-    workoutPlans: [workoutPlanEntrySchema]
+    workoutSessions: [workoutSessionSchema]
 })
 
-const WorkoutPlan = model('WorkoutPlan', workoutPlanSchema)
+const TrainingPlan = model('trainingPlan', trainingPlanSchema)
 
-module.exports = WorkoutPlan
+module.exports = TrainingPlan
 
-// {
-//             "additionalNotes": "This is a general note for the workout plan.",
-//                 "workoutPlans": [
-//                     {
-//                         "title": "Strength Training Plan",
-//                         "workouts": [
-//                             {
-//                                 "workout": "60d0fe4f5311236168a109cc",
-//                                 "reps": 10,
-//                                 "sets": 4,
-//                                 "rest": 90,
-//                                 "note": "Increase weight gradually"
-//                             },
-//                             {
-//                                 "workout": "60d0fe4f5311236168a109cd",
-//                                 "reps": 12,
-//                                 "sets": 3,
-//                                 "rest": 60,
-//                                 "note": "Maintain proper posture"
-//                             }
-//                         ]
-//                     },
-//                     {
-//                         "title": "Cardio Plan",
-//                         "workouts": [
-//                             {
-//                                 "workout": "60d0fe4f5311236168a109ce",
-//                                 "reps": 1,
-//                                 "sets": 1,
-//                                 "rest": 0,
-//                                 "note": "Warm-up properly before starting"
-//                             }
-//                         ]
-//                     }
-//                 ]
-// }
+
