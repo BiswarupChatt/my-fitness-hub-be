@@ -26,7 +26,7 @@ const workoutSchema = new Schema({
 }, { _id: false })
 
 const workoutPlanEntrySchema = new Schema({
-    id:{
+    id: {
         type: String,
         required: true
     },
@@ -48,6 +48,10 @@ const workoutPlanSchema = new Schema({
         ref: "User",
         required: true
     },
+    additionalNotes: {
+        type: String,
+        required: false
+    },
     workoutPlans: [workoutPlanEntrySchema]
 })
 
@@ -56,39 +60,42 @@ const WorkoutPlan = model('WorkoutPlan', workoutPlanSchema)
 module.exports = WorkoutPlan
 
 // {
-//     "client": "60d9f1f1f1f1f1f1f1f1f1f1",
-//     "coach": "60d9f2f2f2f2f2f2f2f2f2f2",
-//     "workoutPlans": [
-//         {
-//             "title": "Morning Workout",
-//             "workouts": [
-//                 {
-//                     "workout": "60d9f3f3f3f3f3f3f3f3f3f3",
-//                     "reps": 10,
-//                     "sets": 3,
-//                     "rest": 60,
-//                     "note": "Focus on form"
-//                 },
-//                 {
-//                     "workout": "60d9f4f4f4f4f4f4f4f4f4f4",
-//                     "reps": 15,
-//                     "sets": 4,
-//                     "rest": 45,
-//                     "note": "Increase weight gradually"
-//                 }
-//             ]
-//         },
-//         {
-//             "title": "Evening Cardio",
-//             "workouts": [
-//                 {
-//                     "workout": "60d9f5f5f5f5f5f5f5f5f5f5",
-//                     "reps": 20,
-//                     "sets": 5,
-//                     "rest": 30,
-//                     "note": "Keep heart rate up"
-//                 }
-//             ]
-//         }
-//     ]
+//     "client": "60d0fe4f5311236168a109ca",
+//         "coach": "60d0fe4f5311236168a109cb",
+//             "additionalNotes": "This is a general note for the workout plan.",
+//                 "workoutPlans": [
+//                     {
+//                         "id": "a1b2c3d4e5f6g7h8i9j0",
+//                         "title": "Strength Training Plan",
+//                         "workouts": [
+//                             {
+//                                 "workout": "60d0fe4f5311236168a109cc",
+//                                 "reps": 10,
+//                                 "sets": 4,
+//                                 "rest": 90,
+//                                 "note": "Increase weight gradually"
+//                             },
+//                             {
+//                                 "workout": "60d0fe4f5311236168a109cd",
+//                                 "reps": 12,
+//                                 "sets": 3,
+//                                 "rest": 60,
+//                                 "note": "Maintain proper posture"
+//                             }
+//                         ]
+//                     },
+//                     {
+//                         "id": "z9y8x7w6v5u4t3s2r1q0",
+//                         "title": "Cardio Plan",
+//                         "workouts": [
+//                             {
+//                                 "workout": "60d0fe4f5311236168a109ce",
+//                                 "reps": 1,
+//                                 "sets": 1,
+//                                 "rest": 0,
+//                                 "note": "Warm-up properly before starting"
+//                             }
+//                         ]
+//                     }
+//                 ]
 // }

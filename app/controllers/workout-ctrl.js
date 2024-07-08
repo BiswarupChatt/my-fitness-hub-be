@@ -57,11 +57,11 @@ workoutCtrl.get = async (req, res) => {
 }
 
 workoutCtrl.update = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
     try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() })
-        }
         const body = {
             exerciseName: req.body.exerciseName,
             videoLink: req.body.videoLink
