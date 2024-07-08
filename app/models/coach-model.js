@@ -22,7 +22,7 @@ const coachSchema = new Schema({
         accNumber: String,
         ifscCode:  String
     }
-})
+}, { timestamps: true })
 
 const Coach = model('Coach', coachSchema)
 

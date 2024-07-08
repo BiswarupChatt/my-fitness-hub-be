@@ -11,7 +11,7 @@ const answerSchema = new Schema({
         ref: "User"
     },
     answer: String
-})
+}, { timestamps: true })
 
 const Answer = model("Answer", answerSchema)
 

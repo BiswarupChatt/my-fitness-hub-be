@@ -13,7 +13,7 @@ const workoutSchema = new Schema({
     },
     exerciseName: String,
     videoLink: String
-})
+}, { timestamps: true })
 
 const Workout = model('Workout', workoutSchema)
 
