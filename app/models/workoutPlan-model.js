@@ -60,12 +60,9 @@ const WorkoutPlan = model('WorkoutPlan', workoutPlanSchema)
 module.exports = WorkoutPlan
 
 // {
-//     "client": "60d0fe4f5311236168a109ca",
-//         "coach": "60d0fe4f5311236168a109cb",
 //             "additionalNotes": "This is a general note for the workout plan.",
 //                 "workoutPlans": [
 //                     {
-//                         "id": "a1b2c3d4e5f6g7h8i9j0",
 //                         "title": "Strength Training Plan",
 //                         "workouts": [
 //                             {
@@ -85,7 +82,6 @@ module.exports = WorkoutPlan
 //                         ]
 //                     },
 //                     {
-//                         "id": "z9y8x7w6v5u4t3s2r1q0",
 //                         "title": "Cardio Plan",
 //                         "workouts": [
 //                             {

@@ -11,12 +11,14 @@ const clientCtrl = require('./app/controllers/client-ctrl')
 const answerCtrl = require('./app/controllers/answer-ctrl')
 const workoutCtrl = require('./app/controllers/workout-ctrl')
 const questionCtrl = require('./app/controllers/question-ctrl')
+const workoutPlanCtrl = require('./app/controllers/workoutPlan-ctrl')
 
 const { workoutValidation } = require('./app/validations/workout-validations')
 const { questionValidation } = require('./app/validations/question-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
 const { answerValidations, answerUpdateValidations } = require('./app/validations/answer-validations')
+const {workoutPlanValidations} = require('./app/validations/workoutPlan-validations')
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
 const upload = require('./app/middlewares/multer')
@@ -74,6 +76,8 @@ app.get('/workout/:coachId?', authenticateUser, workoutCtrl.get)
 app.put('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.update)
 app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), workoutCtrl.delete)
 
+app.post('/workout-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(workoutPlanValidations), workoutPlanCtrl.create)
+app.get('/workout-plan/:clientId?', authenticateUser, workoutPlanCtrl.get)
 
 app.listen(port, () => {
     console.log(`Server is running successfully on this url http://localhost:${port}`)

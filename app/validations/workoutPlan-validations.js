@@ -1,31 +1,5 @@
 
 const workoutPlanValidations = {
-    client: {
-        in: ['body'],
-        exists: {
-            errorMessage: "Client is Required"
-        },
-        notEmpty: {
-            errorMessage: "Client cannot be empty"
-        },
-        isMongoId: {
-            errorMessage: "Client must be a valid MongoId"
-        },
-        trim: true
-    },
-    coach: {
-        in: ['body'],
-        exists: {
-            errorMessage: "Coach is Required"
-        },
-        notEmpty: {
-            errorMessage: "Coach cannot be empty"
-        },
-        isMongoId: {
-            errorMessage: "Coach must be a valid MongoId"
-        },
-        trim: true
-    },
     additionalNotes: {
         in: ['body'],
         optional: true,
@@ -89,4 +63,4 @@ const workoutPlanValidations = {
 
 }
 
-module.exports = workoutPlanValidations
+module.exports = { workoutPlanValidations }
