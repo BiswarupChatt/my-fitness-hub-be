@@ -54,10 +54,11 @@ trainingPlanCtrl.get = async (req, res) => {
         }
 
         const findClient = await Client.findOne({ user: client })
+        console.log(findClient)
         if (!findClient) {
             return res.status(404).json({ errors: 'Client not found / Please provide client id to the params' })
         }
-        if (req.user.role === 'coach' && findClient.toString() !== req.user.id.toString()) {
+        if (req.user.role === 'coach' && findClient.coach._id.toString() !== req.user.id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to view this client's workout plan" })
         }
 
