@@ -76,4 +76,49 @@ trainingPlanCtrl.get = async (req, res) => {
     }
 }
 
+trainingPlanCtrl.addWorkoutSession = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    try {
+        const { workoutSession } = req.body
+        const clientId = req.params.clientId
+
+        const findClient = await Client.findOne({ user: clientId })
+        if (!findClient) {
+            return res.status(404).json({ errors: 'Client not found' })
+        }
+        if (findClient.coach._id.toString() !== req.user.id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to update this client's workoutSessions" })
+        }
+
+        if (!workoutSession.id) {
+            workoutSession.id = uuidv4()
+        }
+
+        const updatedTrainingPlan = await TrainingPlan.findOneAndUpdate({ client: clientId }, { $push: { workoutSessions: workoutSession } }, { new: true })
+        res.status(201).json(updatedTrainingPlan)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
+trainingPlanCtrl.deleteWorkoutSession = async (req, res) => {
+    try {
+        const { workoutSessionId, clientId } = req.params
+        const findClient = await Client.findOne({ user: clientId })
+        if (!findClient) {
+            return res.status(404).json({ errors: 'Client not found' })
+        }
+        if (findClient.coach._id.toString() !== req.user.id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to delete this client's workoutSessions" })
+        }
+        const deleteWorkoutSession = await TrainingPlan.findOneAndUpdate({ client: clientId }, { $pull: { workoutSessions: { id: workoutSessionId } } }, { new: true })
+        res.status(200).json(deleteWorkoutSession)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 module.exports = trainingPlanCtrl

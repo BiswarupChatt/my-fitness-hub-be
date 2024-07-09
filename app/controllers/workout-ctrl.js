@@ -47,9 +47,9 @@ workoutCtrl.create = async (req, res) => {
 
 workoutCtrl.get = async (req, res) => {
     try {
-        const defaultQuestion = await Workout.find({ isDefault: true }).populate("coach", "_id firstName lastName email role")
-        const coachQuestion = req.params.coachId ? await Workout.find({ coach: req.params.coachId }).populate("coach", "_id firstName lastName email role") : []
-        const all = defaultQuestion.concat(coachQuestion)
+        const defaultWorkout = await Workout.find({ isDefault: true }).populate("coach", "_id firstName lastName email role")
+        const coachWorkout = req.params.coachId ? await Workout.find({ coach: req.params.coachId }).populate("coach", "_id firstName lastName email role") : []
+        const all = defaultWorkout.concat(coachWorkout)
         res.status(201).json(all)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })

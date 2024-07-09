@@ -17,7 +17,7 @@ const { workoutValidation } = require('./app/validations/workout-validations')
 const { questionValidation } = require('./app/validations/question-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
-const {trainingPlanValidations} = require('./app/validations/trainingPlan-validations')
+const { trainingPlanValidations, workoutSessionValidation } = require('./app/validations/trainingPlan-validations')
 const { answerValidations, answerUpdateValidations } = require('./app/validations/answer-validations')
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
@@ -78,6 +78,8 @@ app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']),
 
 app.post('/training-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(trainingPlanValidations), trainingPlanCtrl.create)
 app.get('/training-plan/:clientId?', authenticateUser, trainingPlanCtrl.get)
+app.put('/training-plan/:clientId/addWorkoutSession', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.addWorkoutSession)
+app.put('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), trainingPlanCtrl.deleteWorkoutSession)
 
 app.listen(port, () => {
     console.log(`Server is running successfully on this url http://localhost:${port}`)
