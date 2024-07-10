@@ -79,6 +79,7 @@ app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']),
 app.post('/training-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(trainingPlanValidations), trainingPlanCtrl.create)
 app.get('/training-plan/:clientId?', authenticateUser, trainingPlanCtrl.get)
 app.put('/training-plan/:clientId/addWorkoutSession', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.addWorkoutSession)
+app.put('/training-plan/:clientId/updateWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.updateWorkoutSession)
 app.put('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), trainingPlanCtrl.deleteWorkoutSession)
 
 app.listen(port, () => {
