@@ -76,6 +76,29 @@ trainingPlanCtrl.get = async (req, res) => {
     }
 }
 
+trainingPlanCtrl.updateAdditionalNotes = async (req, res) => {
+    try {
+        const clientId = req.params.clientId
+        const { additionalNotes } = req.body
+
+        const findClient = await Client.findOne({ user: clientId })
+        if (!findClient) {
+            return res.status(404).json({ errors: 'Client not found' })
+        }
+        if (findClient.coach._id.toString() !== req.user.id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to update additional notes" })
+        }
+        const trainingPlan = await TrainingPlan.findOneAndUpdate({ client: clientId }, { additionalNotes: additionalNotes }, { new: true })
+        if (!trainingPlan) {
+            return res.status(404).json({ errors: 'Training plan not found' })
+        }
+        res.status(200).json(trainingPlan)
+
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 trainingPlanCtrl.addWorkoutSession = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -90,7 +113,7 @@ trainingPlanCtrl.addWorkoutSession = async (req, res) => {
             return res.status(404).json({ errors: 'Client not found' })
         }
         if (findClient.coach._id.toString() !== req.user.id.toString()) {
-            return res.status(404).json({ errors: "You are not authorized to update this client's workoutSessions" })
+            return res.status(404).json({ errors: "You are not authorized to add this client's workoutSessions" })
         }
 
         if (!workoutSession.id) {
@@ -128,7 +151,6 @@ trainingPlanCtrl.updateWorkoutSession = async (req, res) => {
         const sessionIndex = trainingPlan.workoutSessions.findIndex((ele) => {
             return ele.id === workoutSessionId
         })
-        console.log(sessionIndex)
         if (sessionIndex === -1) {
             return res.status(404).json({ errors: 'Workout Session ID not found' })
         }
