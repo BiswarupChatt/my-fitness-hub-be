@@ -104,6 +104,8 @@ trainingPlanCtrl.addWorkoutSession = async (req, res) => {
     }
 }
 
+// todo update workout session
+
 trainingPlanCtrl.deleteWorkoutSession = async (req, res) => {
     try {
         const { workoutSessionId, clientId } = req.params
@@ -114,6 +116,18 @@ trainingPlanCtrl.deleteWorkoutSession = async (req, res) => {
         if (findClient.coach._id.toString() !== req.user.id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to delete this client's workoutSessions" })
         }
+        const trainingPlan = await TrainingPlan.findOne({ client: clientId })
+        if (!trainingPlan) {
+            return res.status(404).json({ errors: 'Training plan not found' })
+        }
+
+        const sessionExists = trainingPlan.workoutSessions.find((ele) => {
+            return ele.id === workoutSessionId
+        })
+        if (!sessionExists) {
+            return res.status(404).json({ errors: 'Workout Session ID not found' })
+        }
+
         const deleteWorkoutSession = await TrainingPlan.findOneAndUpdate({ client: clientId }, { $pull: { workoutSessions: { id: workoutSessionId } } }, { new: true })
         res.status(200).json(deleteWorkoutSession)
     } catch (err) {
