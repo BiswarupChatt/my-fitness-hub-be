@@ -7,7 +7,7 @@ const progressSchema = new Schema({
         ref: "User"
     },
     date: {
-        type: Number,
+        type: Date,
         required: true
     },
     weight: {

@@ -38,7 +38,7 @@ answerCtrl.create = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-
+//todo combine get method
 answerCtrl.getMyAnswer = async (req, res) => {
     try {
         const answer = await Answer.find({ client: req.user.id }).populate('question client')

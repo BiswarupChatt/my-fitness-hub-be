@@ -11,14 +11,16 @@ const clientCtrl = require('./app/controllers/client-ctrl')
 const answerCtrl = require('./app/controllers/answer-ctrl')
 const workoutCtrl = require('./app/controllers/workout-ctrl')
 const questionCtrl = require('./app/controllers/question-ctrl')
+const progressCtrl = require('./app/controllers/progress-ctrl')
 const trainingPlanCtrl = require('./app/controllers/trainingPlan-ctrl')
 
 const { workoutValidation } = require('./app/validations/workout-validations')
 const { questionValidation } = require('./app/validations/question-validations')
+const { progressValidation } = require('./app/validations/progress-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
-const { trainingPlanValidations, workoutSessionValidation } = require('./app/validations/trainingPlan-validations')
 const { answerValidations, answerUpdateValidations } = require('./app/validations/answer-validations')
+const { trainingPlanValidations, workoutSessionValidation } = require('./app/validations/trainingPlan-validations')
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
 const upload = require('./app/middlewares/multer')
@@ -82,6 +84,11 @@ app.put('/training-plan/:clientId/updateAdditionalNotes', authenticateUser, auth
 app.put('/training-plan/:clientId/addWorkoutSession', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.addWorkoutSession)
 app.put('/training-plan/:clientId/updateWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.updateWorkoutSession)
 app.put('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), trainingPlanCtrl.deleteWorkoutSession)
+
+
+app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
+app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
+app.get('')
 
 app.listen(port, () => {
     console.log(`Server is running successfully on this url http://localhost:${port}`)
