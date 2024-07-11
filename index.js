@@ -93,6 +93,7 @@ app.put('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authe
 app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
 app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
 app.put('/progress/:_id', authenticateUser, authorizeUser(['client']), checkSchema(progressUpdateValidation), progressCtrl.update)
+app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progressCtrl.delete)
 
 
 
