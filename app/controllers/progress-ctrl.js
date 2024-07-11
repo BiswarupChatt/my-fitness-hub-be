@@ -68,9 +68,6 @@ progressCtrl.update = async (req, res) => {
         }
         
         const updatedProgress = await Progress.findByIdAndUpdate(req.params._id, progressData, { new: true })
-        if (!updatedProgress) {
-            return res.status(404).json({ errors: "Progress record not found" })
-        }
 
         res.status(201).json(updatedProgress)
     } catch (err) {
