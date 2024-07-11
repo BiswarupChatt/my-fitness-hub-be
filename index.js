@@ -16,10 +16,10 @@ const trainingPlanCtrl = require('./app/controllers/trainingPlan-ctrl')
 
 const { workoutValidation } = require('./app/validations/workout-validations')
 const { questionValidation } = require('./app/validations/question-validations')
-const { progressValidation } = require('./app/validations/progress-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
 const { answerValidations, answerUpdateValidations } = require('./app/validations/answer-validations')
+const { progressValidation, progressUpdateValidation } = require('./app/validations/progress-validations')
 const { trainingPlanValidations, workoutSessionValidation } = require('./app/validations/trainingPlan-validations')
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 
@@ -88,7 +88,9 @@ app.put('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authe
 
 app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
 app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
-app.get('')
+app.put('/progress/:_id', authenticateUser, authorizeUser(['client']), checkSchema(progressUpdateValidation), progressCtrl.update)
+
+
 
 app.listen(port, () => {
     console.log(`Server is running successfully on this url http://localhost:${port}`)
