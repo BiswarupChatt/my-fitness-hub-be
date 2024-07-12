@@ -43,6 +43,8 @@ app.get('/users/account', authenticateUser, userCtrl.getAccount)
 app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
 app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)
+
+//todo replace coachId with jwt token
 app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
 app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
 app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)
@@ -54,6 +56,7 @@ app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachU
 app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach']), coachCtrl.getAllCLient)
 app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coach']), coachCtrl.getSingleCLient)
 app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
+//todo send invitation email to client
 
 
 app.put('/client', authenticateUser, authorizeUser(['client']), checkSchema(clientUpdateValidations), clientCtrl.update)
