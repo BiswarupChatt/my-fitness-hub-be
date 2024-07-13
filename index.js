@@ -13,8 +13,10 @@ const workoutCtrl = require('./app/controllers/workout-ctrl')
 const questionCtrl = require('./app/controllers/question-ctrl')
 const progressCtrl = require('./app/controllers/progress-ctrl')
 const trainingPlanCtrl = require('./app/controllers/trainingPlan-ctrl')
+const foodItemCtrl = require('./app/controllers/foodItem-ctrl')
 
 const { workoutValidation } = require('./app/validations/workout-validations')
+const { foodItemValidation } = require('./app/validations/foodItem-validation')
 const { questionValidation } = require('./app/validations/question-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
@@ -97,6 +99,9 @@ app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(p
 app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
 app.put('/progress/:_id', authenticateUser, authorizeUser(['client']), checkSchema(progressUpdateValidation), progressCtrl.update)
 app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progressCtrl.delete)
+
+
+app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
 
 
 
