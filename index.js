@@ -102,6 +102,7 @@ app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progre
 
 
 app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
+app.get('/food-item/:coachId?', authenticateUser, foodItemCtrl.get)
 
 
 

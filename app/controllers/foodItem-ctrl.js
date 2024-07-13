@@ -34,4 +34,16 @@ foodItemCtrl.create = async (req, res) => {
     }
 }
 
+
+foodItemCtrl.get = async (req, res) => {
+    try {
+        const defaultFoodItem = await FoodItem.find({ isDefault: true }).populate("coach")
+        const coachFoodItem = await FoodItem.find({ coach: req.params.coachId }).populate("coach")
+        const all = defaultFoodItem.concat(coachFoodItem)
+        res.status(200).json(all)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 module.exports = foodItemCtrl
