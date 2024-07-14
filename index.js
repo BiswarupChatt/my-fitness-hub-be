@@ -103,7 +103,8 @@ app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progre
 
 app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
 app.get('/food-item/:coachId?', authenticateUser, foodItemCtrl.get)
-
+app.put('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.update)
+app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.delete)
 
 
 app.listen(port, () => {

@@ -46,4 +46,50 @@ foodItemCtrl.get = async (req, res) => {
     }
 }
 
+
+foodItemCtrl.update = async (req, res) => {
+    try {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
+        const body = {
+            foodName: req.body.foodName,
+            unit: req.body.unit,
+            calories: req.body.calories,
+            protein: req.body.protein,
+            fat: req.body.fat,
+            carbohydrates: req.body.carbohydrates
+        }
+        const foodItem = await FoodItem.findById(req.params._id)
+        if(!foodItem){
+            return res.status(404).json({ errors: "Food item not found" })
+        }
+        if (req.user.id.toString() !== foodItem.coach._id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to update" })
+        }
+        const updatedFoodItem = await FoodItem.findByIdAndUpdate(req.params._id, body, { new: true })
+        res.status(201).json(updatedFoodItem)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
+
+foodItemCtrl.delete = async (req, res) => {
+    try {
+        const foodItem = await FoodItem.findById(req.params._id)
+        if (!foodItem) {
+            return res.status(404).json({ errors: "Food item not found" })
+        }
+        if (req.user.id.toString() !== foodItem.coach._id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to delete" })
+        }
+        const deletedFoodItem = await FoodItem.findByIdAndDelete(req.params._id)
+        res.status(201).json(deletedFoodItem)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 module.exports = foodItemCtrl
