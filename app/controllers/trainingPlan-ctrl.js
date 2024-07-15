@@ -62,7 +62,7 @@ trainingPlanCtrl.get = async (req, res) => {
             return res.status(404).json({ errors: "You are not authorized to view this client's workout plan" })
         }
 
-        const trainingPlan = await TrainingPlan.find({ client: client }).populate({
+        const trainingPlan = await TrainingPlan.findOne({ client: client }).populate({
             path: 'workoutSessions.exercises.workout', model: 'Workout'
         }).populate('client coach')
         if (!trainingPlan) {

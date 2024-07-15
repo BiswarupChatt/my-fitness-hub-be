@@ -84,30 +84,36 @@ app.get('/answer/:clientId', authenticateUser, authorizeUser(['coach', 'admin'])
 app.put('/answer/:_id', authenticateUser, authorizeUser(['client']), checkSchema(answerUpdateValidations), answerCtrl.update)
 app.delete('/answer/:_id', authenticateUser, authorizeUser(['client']), answerCtrl.delete)
 
+
 app.post('/workout', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.create)
 app.get('/workout/:coachId?', authenticateUser, workoutCtrl.get)
 app.put('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.update)
 app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), workoutCtrl.delete)
 
+
 app.post('/training-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(trainingPlanValidations), trainingPlanCtrl.create)
 app.get('/training-plan/:clientId?', authenticateUser, trainingPlanCtrl.get)
-app.put('/training-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.updateAdditionalNotes)
+app.put('/training-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach']), trainingPlanCtrl.updateAdditionalNotes)
 app.put('/training-plan/:clientId/addWorkoutSession', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.addWorkoutSession)
 app.put('/training-plan/:clientId/updateWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.updateWorkoutSession)
 app.put('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), trainingPlanCtrl.deleteWorkoutSession)
 
-app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
-app.get('/food-item/:coachId?', authenticateUser, foodItemCtrl.get)
-app.put('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.update)
-app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.delete)
-
-app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
 
 app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
 app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
 app.put('/progress/:_id', authenticateUser, authorizeUser(['client']), checkSchema(progressUpdateValidation), progressCtrl.update)
 app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progressCtrl.delete)
 
+
+app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
+app.get('/food-item/:coachId?', authenticateUser, foodItemCtrl.get)
+app.put('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.update)
+app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.delete)
+
+
+app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
+app.get('/nutrition-plan/:clientId?', authenticateUser, nutritionPlanCtrl.get)
+app.put('/nutrition-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach']), nutritionPlanCtrl.updateAdditionalNotes)
 
 
 app.listen(port, () => {
