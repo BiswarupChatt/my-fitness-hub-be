@@ -25,7 +25,7 @@ const foodItemValidation = {
         },
         isIn: {
             options: [['grams', 'piece']],
-            errorMessage: 'Quantity must be either "grams" or "piece"'
+            errorMessage: 'Unit must be either "grams" or "piece"'
         },
         trim: true
     },
