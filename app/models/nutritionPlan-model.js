@@ -68,6 +68,6 @@ const nutritionPlanSchema = new Schema({
     mealPlans: [mealPlanSchema]
 })
 
-const NutritionPlan = mongoose.model('NutritionPlan', nutritionPlanSchema)
+const NutritionPlan = model('NutritionPlan', nutritionPlanSchema)
 
 module.exports = NutritionPlan
