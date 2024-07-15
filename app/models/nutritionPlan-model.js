@@ -1,31 +1,43 @@
 const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 
-const exerciseSchema = new Schema({
-    workout: {
+const mealSchema = new Schema({
+    foodName: {
         type: Schema.Types.ObjectId,
-        ref: "Workout",
+        ref: "FoodItem",
         required: true
     },
-    reps: {
-        type: Number,
-        required: false
+    unit: {
+        type: String,
+        required: true
     },
-    sets: {
+    quantity: {
         type: Number,
-        required: false,
+        required: true
     },
-    rest: {
+    calories: {
         type: Number,
-        required: false
+        required: true
+    },
+    carbohydrate: {
+        type: Number,
+        required: true
+    },
+    protein: {
+        type: Number,
+        required: true
+    },
+    fats: {
+        type: Number,
+        required: true
     },
     note: {
         type: String,
         default: ''
     }
-}, { _id: false })
+})
 
-const workoutSessionSchema = new Schema({
+const mealPlanSchema = new Schema({
     id: {
         type: String,
         required: true,
@@ -35,10 +47,10 @@ const workoutSessionSchema = new Schema({
         type: String,
         required: true
     },
-    exercises: [exerciseSchema]
+    meals: [mealSchema]
 }, { timestamps: true, _id: false })
 
-const trainingPlanSchema = new Schema({
+const nutritionPlanSchema = new Schema({
     client: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -53,11 +65,9 @@ const trainingPlanSchema = new Schema({
         type: String,
         default: ''
     },
-    workoutSessions: [workoutSessionSchema]
+    mealPlans: [mealPlanSchema]
 })
 
-const TrainingPlan = model('trainingPlan', trainingPlanSchema)
+const NutritionPlan = mongoose.model('NutritionPlan', nutritionPlanSchema)
 
-module.exports = TrainingPlan
-
-
+module.exports = NutritionPlan
