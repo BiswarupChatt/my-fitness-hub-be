@@ -2,7 +2,6 @@ const foodItemValidation = {
     foodName: {
         in: ['body'],
         isString: {
-            options: { min: 0 },
             errorMessage: 'Food name must be a String'
         },
         exists: {
@@ -16,7 +15,6 @@ const foodItemValidation = {
     unit: {
         in: ['body'],
         isString: {
-            options: { min: 0 },
             errorMessage: 'Unit must be a String'
         },
         exists: {
@@ -24,6 +22,23 @@ const foodItemValidation = {
         },
         notEmpty: {
             errorMessage: "Unit cannot be empty"
+        },
+        isIn: {
+            options: [['grams', 'piece']],
+            errorMessage: 'Quantity must be either "grams" or "piece"'
+        },
+        trim: true
+    },
+    quantity: {
+        in: ['body'],
+        isString: {
+            errorMessage: 'Quantity must be a String'
+        },
+        exists: {
+            errorMessage: "Quantity is required"
+        },
+        notEmpty: {
+            errorMessage: "Quantity cannot be empty"
         },
         trim: true
     },

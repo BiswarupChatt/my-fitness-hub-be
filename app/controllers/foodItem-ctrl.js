@@ -21,6 +21,8 @@ foodItemCtrl.create = async (req, res) => {
             coach: req.user.id,
             foodName: req.body.foodName,
             unit: req.body.unit,
+            //todo:- logically set default quantity based on the unit selected
+            quantity: req.body.quantity,
             calories: req.body.calories,
             protein: req.body.protein,
             fat: req.body.fat,
@@ -56,6 +58,7 @@ foodItemCtrl.update = async (req, res) => {
         const body = {
             foodName: req.body.foodName,
             unit: req.body.unit,
+            quantity: req.body.quantity,
             calories: req.body.calories,
             protein: req.body.protein,
             fat: req.body.fat,
