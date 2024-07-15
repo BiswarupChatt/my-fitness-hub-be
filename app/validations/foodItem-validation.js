@@ -24,8 +24,8 @@ const foodItemValidation = {
             errorMessage: "Unit cannot be empty"
         },
         isIn: {
-            options: [['grams', 'piece']],
-            errorMessage: 'Unit must be either "grams" or "piece"'
+            options: [['grams', 'milliliters', 'pounds', 'ounces', 'piece']],
+            errorMessage: "Unit must be 'grams', 'milliliters', 'pounds', 'ounces' or 'piece'"
         },
         trim: true
     },

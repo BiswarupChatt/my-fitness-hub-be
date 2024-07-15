@@ -15,9 +15,6 @@ const trainingPlanValidations = {
     },
     'workoutSessions.*.title': {
         in: ['body'],
-        exists: {
-            errorMessage: "Title is Required"
-        },
         notEmpty: {
             errorMessage: "Title cannot be empty"
         },
@@ -67,9 +64,6 @@ const trainingPlanValidations = {
 const workoutSessionValidation = {
     'workoutSessions.*.title': {
         in: ['body'],
-        exists: {
-            errorMessage: "Title is Required"
-        },
         notEmpty: {
             errorMessage: "Title cannot be empty"
         },
