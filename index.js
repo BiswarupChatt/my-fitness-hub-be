@@ -8,24 +8,24 @@ const { checkSchema } = require('express-validator')
 const userCtrl = require('./app/controllers/user-ctrl')
 const coachCtrl = require('./app/controllers/coach-ctrl')
 const clientCtrl = require('./app/controllers/client-ctrl')
+const questionCtrl = require('./app/controllers/question-ctrl')
 const answerCtrl = require('./app/controllers/answer-ctrl')
 const workoutCtrl = require('./app/controllers/workout-ctrl')
-const questionCtrl = require('./app/controllers/question-ctrl')
-const progressCtrl = require('./app/controllers/progress-ctrl')
 const foodItemCtrl = require('./app/controllers/foodItem-ctrl')
 const trainingPlanCtrl = require('./app/controllers/trainingPlan-ctrl')
 const nutritionPlanCtrl = require('./app/controllers/nutritionPlan-ctrl')
+const progressCtrl = require('./app/controllers/progress-ctrl')
 
-const { workoutValidation } = require('./app/validations/workout-validations')
-const { foodItemValidation } = require('./app/validations/foodItem-validation')
-const { questionValidation } = require('./app/validations/question-validations')
+const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 const { coachUpdateValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
-const { nutritionPlanValidation } = require('./app/validations/nutritionPlan-validation')
+const { questionValidation } = require('./app/validations/question-validations')
 const { answerValidations, answerUpdateValidations } = require('./app/validations/answer-validations')
-const { progressValidation, progressUpdateValidation } = require('./app/validations/progress-validations')
+const { workoutValidation } = require('./app/validations/workout-validations')
+const { foodItemValidation } = require('./app/validations/foodItem-validation')
 const { trainingPlanValidations, workoutSessionValidation } = require('./app/validations/trainingPlan-validations')
-const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
+const { nutritionPlanValidation, mealPlansValidations } = require('./app/validations/nutritionPlan-validation')
+const { progressValidation, progressUpdateValidation } = require('./app/validations/progress-validations')
 
 const upload = require('./app/middlewares/multer')
 const authorizeUser = require('./app/middlewares/authorizeUser')
@@ -47,7 +47,6 @@ app.get('/users/account', authenticateUser, userCtrl.getAccount)
 app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
 app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)
-
 //todo replace coachId with jwt token
 app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
 app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
@@ -68,7 +67,6 @@ app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.getMy
 
 
 app.post('/question', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.create)
-
 ///todo combine both the get method
 app.get('/question', authenticateUser, questionCtrl.getDefault)
 app.get('/question/:coachId', authenticateUser, questionCtrl.get)
@@ -77,7 +75,6 @@ app.delete('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"])
 
 
 app.post('/answer', authenticateUser, authorizeUser(['client']), checkSchema(answerValidations), answerCtrl.create)
-
 //todo combine both the get method
 app.get('/answer', authenticateUser, authorizeUser(['client']), answerCtrl.getMyAnswer)
 app.get('/answer/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), answerCtrl.getClientAnswer)
@@ -114,6 +111,7 @@ app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']
 app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
 app.get('/nutrition-plan/:clientId?', authenticateUser, nutritionPlanCtrl.get)
 app.put('/nutrition-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach']), nutritionPlanCtrl.updateAdditionalNotes)
+app.put('/nutrition-plan/:clientId/addMealPlan', authenticateUser, authorizeUser(['coach']), checkSchema(mealPlansValidations), nutritionPlanCtrl.addMealPlans)
 
 
 app.listen(port, () => {
