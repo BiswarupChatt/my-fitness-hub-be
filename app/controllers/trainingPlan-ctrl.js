@@ -105,8 +105,9 @@ trainingPlanCtrl.addWorkoutSession = async (req, res) => {
         return res.status(400).json({ errors: errors.array() })
     }
     try {
-        const { workoutSession } = req.body
+        const { exercises, title } = req.body
         const clientId = req.params.clientId
+        const id = uuidv4()
 
         const findClient = await Client.findOne({ user: clientId })
         if (!findClient) {
@@ -116,13 +117,16 @@ trainingPlanCtrl.addWorkoutSession = async (req, res) => {
             return res.status(404).json({ errors: "You are not authorized to add this client's workoutSessions" })
         }
 
-        if (!workoutSession.id) {
-            workoutSession.id = uuidv4()
+        const addWorkoutSession = {
+            id: id,
+            title: title,
+            exercises: exercises
         }
 
-        const updatedTrainingPlan = await TrainingPlan.findOneAndUpdate({ client: clientId }, { $push: { workoutSessions: workoutSession } }, { new: true })
+        const updatedTrainingPlan = await TrainingPlan.findOneAndUpdate({ client: clientId }, { $push: { workoutSessions: addWorkoutSession } }, { new: true })
         res.status(201).json(updatedTrainingPlan)
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
@@ -135,7 +139,7 @@ trainingPlanCtrl.updateWorkoutSession = async (req, res) => {
 
     try {
         const { workoutSessionId, clientId } = req.params
-        const { workoutSession } = req.body
+        const { title, exercises } = req.body
 
         const findClient = await Client.findOne({ user: clientId })
         if (!findClient) {
@@ -155,8 +159,8 @@ trainingPlanCtrl.updateWorkoutSession = async (req, res) => {
             return res.status(404).json({ errors: 'Workout Session ID not found' })
         }
 
-        trainingPlan.workoutSessions[sessionIndex].title = workoutSession.title
-        trainingPlan.workoutSessions[sessionIndex].exercises = workoutSession.exercises
+        trainingPlan.workoutSessions[sessionIndex].title = title
+        trainingPlan.workoutSessions[sessionIndex].exercises = exercises
 
         await trainingPlan.save()
         res.status(200).json(trainingPlan)

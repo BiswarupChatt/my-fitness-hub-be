@@ -105,7 +105,7 @@ const nutritionPlanValidation = {
 }
 
 const mealPlansValidations = {
-    'mealPlans.title': {
+    'mealPlans.*.title': {
         in: ['body'],
         isString: {
             errorMessage: 'Meal plan title must be a string'
@@ -114,7 +114,7 @@ const mealPlansValidations = {
             errorMessage: 'Meal plan title is required'
         }
     },
-    'mealPlans.meals': {
+    'mealPlans.*.meals': {
         in: ['body'],
         isArray: {
             errorMessage: 'Meals must be an array'

@@ -14,8 +14,11 @@ const trainingPlanValidations = {
     },
     'workoutSessions.*.title': {
         in: ['body'],
+        isString: {
+            errorMessage: 'Workout session title must be a string'
+        },
         notEmpty: {
-            errorMessage: "Title cannot be empty"
+            errorMessage: "Workout session title cannot be empty"
         },
         trim: true
     },
@@ -70,36 +73,48 @@ const trainingPlanValidations = {
 
 
 const workoutSessionValidation = {
-    'workoutSessions.*.title': {
+    title: {
         in: ['body'],
+        isString: {
+            errorMessage: 'Workout session title must be a string'
+        },
         notEmpty: {
-            errorMessage: "Title cannot be empty"
+            errorMessage: "Workout session title cannot be empty"
         },
         trim: true
     },
-    'workoutSessions.*.exercises': {
+    exercises: {
         in: ['body'],
-        optional: true,
         isArray: {
             errorMessage: 'Workout plans must be an array'
         }
     },
-    'workoutSessions.*.exercises.*.workout': {
+    'exercises.*.workout': {
         in: ['body'],
-        optional: true,
         isMongoId: {
             errorMessage: "Workout must be a valid Mongo ID"
         },
+        notEmpty: {
+            errorMessage: 'Workout ID is required'
+        }
     },
-    'workoutSessions.*.exercises.*.sets': {
+    'exercises.*.reps': {
         in: ['body'],
         optional: true,
         isInt: {
-            options: { min: 1 },
+            options: { min: 0 },
+            errorMessage: 'Reps must be a positive integer'
+        }
+    },
+    'exercises.*.sets': {
+        in: ['body'],
+        optional: true,
+        isInt: {
+            options: { min: 0 },
             errorMessage: 'Sets must be a positive integer'
         }
     },
-    'workoutSessions.*.exercises.*.rest': {
+    'exercises.*.rest': {
         in: ['body'],
         optional: true,
         isInt: {
@@ -107,7 +122,7 @@ const workoutSessionValidation = {
             errorMessage: 'Rest must be a positive integer'
         }
     },
-    'workoutSessions.*.exercises.*.note': {
+    'exercises.*.note': {
         in: ['body'],
         optional: true,
         isString: {
