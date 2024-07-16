@@ -1,4 +1,3 @@
-
 const trainingPlanValidations = {
     additionalNotes: {
         in: ['body'],
@@ -22,23 +21,32 @@ const trainingPlanValidations = {
     },
     'workoutSessions.*.exercises': {
         in: ['body'],
-        optional: true,
         isArray: {
             errorMessage: 'Workout plans must be an array'
         }
     },
     'workoutSessions.*.exercises.*.workout': {
         in: ['body'],
-        optional: true,
         isMongoId: {
             errorMessage: "Workout must be a valid Mongo ID"
         },
+        notEmpty: {
+            errorMessage: 'Workout ID is required'
+        }
+    },
+    'workoutSessions.*.exercises.*.reps': {
+        in: ['body'],
+        optional: true,
+        isInt: {
+            options: { min: 0 },
+            errorMessage: 'Reps must be a positive integer'
+        }
     },
     'workoutSessions.*.exercises.*.sets': {
         in: ['body'],
         optional: true,
         isInt: {
-            options: { min: 1 },
+            options: { min: 0 },
             errorMessage: 'Sets must be a positive integer'
         }
     },

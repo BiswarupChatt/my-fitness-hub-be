@@ -123,6 +123,7 @@ nutritionPlanCtrl.addMealPlans = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
+
 // nutritionPlanCtrl.updateMealPlans = async (req, res) => {
 //     try {
 
