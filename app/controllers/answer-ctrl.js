@@ -38,19 +38,19 @@ answerCtrl.create = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-//todo combine get method
-answerCtrl.getMyAnswer = async (req, res) => {
-    try {
-        const answer = await Answer.find({ client: req.user.id }).populate('question client')
-        return res.status(201).json(answer)
-    } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
 
-answerCtrl.getClientAnswer = async (req, res) => {
+answerCtrl.get = async (req, res) => {
     try {
-        const answer = await Answer.find({ client: req.params.clientId }).populate('question client')
+        let client
+        if(req.user.role === 'client'){
+            client = req.user.id
+        }else{
+            client = req.params.clientId
+        }
+        if(!client){
+            return res.status(200).json({errors: "Client not found"})
+        }
+        const answer = await Answer.find({ client: client }).populate('question client')
         return res.status(201).json(answer)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })

@@ -73,9 +73,7 @@ app.delete('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"])
 
 
 app.post('/answer', authenticateUser, authorizeUser(['client']), checkSchema(answerValidations), answerCtrl.create)
-//todo combine both the get method
-app.get('/answer', authenticateUser, authorizeUser(['client']), answerCtrl.getMyAnswer)
-app.get('/answer/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), answerCtrl.getClientAnswer)
+app.get('/answer/:clientId?', authenticateUser, answerCtrl.get)
 app.put('/answer/:_id', authenticateUser, authorizeUser(['client']), checkSchema(answerUpdateValidations), answerCtrl.update)
 app.delete('/answer/:_id', authenticateUser, authorizeUser(['client']), answerCtrl.delete)
 
