@@ -88,6 +88,12 @@ app.put('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), ch
 app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), workoutCtrl.delete)
 
 
+app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
+app.get('/food-item/:coachId?', authenticateUser, foodItemCtrl.get)
+app.put('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.update)
+app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.delete)
+
+
 app.post('/training-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(trainingPlanValidations), trainingPlanCtrl.create)
 app.get('/training-plan/:clientId?', authenticateUser, trainingPlanCtrl.get)
 app.put('/training-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach', 'admin']), trainingPlanCtrl.updateAdditionalNotes)
@@ -96,23 +102,18 @@ app.put('/training-plan/:clientId/updateWorkoutSession/:workoutSessionId', authe
 app.delete('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach', 'admin']), trainingPlanCtrl.deleteWorkoutSession)
 
 
-app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
-app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
-app.put('/progress/:_id', authenticateUser, authorizeUser(['client']), checkSchema(progressUpdateValidation), progressCtrl.update)
-app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progressCtrl.delete)
-
-
-app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
-app.get('/food-item/:coachId?', authenticateUser, foodItemCtrl.get)
-app.put('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.update)
-app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.delete)
-
-
 app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
 app.get('/nutrition-plan/:clientId?', authenticateUser, nutritionPlanCtrl.get)
 app.put('/nutrition-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach', 'admin']), nutritionPlanCtrl.updateAdditionalNotes)
 app.post('/nutrition-plan/:clientId/addMealPlan', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlansValidations), nutritionPlanCtrl.addMealPlans)
 app.put('/nutrition-plan/:clientId/updateMealPlan/:mealPlansId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlansValidations), nutritionPlanCtrl.updateMealPlans)
+app.delete('/nutrition-plan/:clientId/deleteMealPlans/:mealPlansId', authenticateUser, authorizeUser(['coach', 'admin']), nutritionPlanCtrl.deleteMealPlans)
+
+
+app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
+app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
+app.put('/progress/:_id', authenticateUser, authorizeUser(['client']), checkSchema(progressUpdateValidation), progressCtrl.update)
+app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progressCtrl.delete)
 
 
 app.listen(port, () => {

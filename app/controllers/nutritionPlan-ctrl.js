@@ -162,12 +162,31 @@ nutritionPlanCtrl.updateMealPlans = async (req, res) => {
     }
 }
 
-// nutritionPlanCtrl.deleteMealPlans = async (req, res) => {
-//     try {
-
-//     } catch (err) {
-//         res.status(500).json({ errors: 'Something went wrong' })
-//     }
-// }
+nutritionPlanCtrl.deleteMealPlans = async (req, res) => {
+    try {
+        const { clientId, mealPlansId } = req.params
+        const findClient = await Client.findOne({ user: clientId })
+        if (!findClient) {
+            return res.status(404).json({ errors: 'Client not found' })
+        }
+        if (findClient.coach._id.toString() !== req.user.id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to delete this client's meal plan" })
+        }
+        const nutritionPlan = await NutritionPlan.findOne({ client: clientId })
+        if (!nutritionPlan) {
+            res.status(404).json({ errors: 'Nutrition plan not found' })
+        }
+        const mealPlanExists = nutritionPlan.mealPlans.find((ele) => {
+            return ele.id === mealPlansId
+        })
+        if (!mealPlanExists) {
+            return res.status(404).json({ errors: 'Meal plan not found' })
+        }
+        const deleteMealPLan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $pull: { mealPlans: { id: mealPlansId } } }, { new: true })
+        res.status(201).json(deleteMealPLan)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
 
 module.exports = nutritionPlanCtrl
