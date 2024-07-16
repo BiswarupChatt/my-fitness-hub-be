@@ -108,7 +108,11 @@ trainingPlanCtrl.addWorkoutSession = async (req, res) => {
         const { exercises, title } = req.body
         const clientId = req.params.clientId
         const id = uuidv4()
-
+        const addToWorkoutSession = {
+            id: id,
+            title: title,
+            exercises: exercises
+        }
         const findClient = await Client.findOne({ user: clientId })
         if (!findClient) {
             return res.status(404).json({ errors: 'Client not found' })
@@ -116,14 +120,8 @@ trainingPlanCtrl.addWorkoutSession = async (req, res) => {
         if (findClient.coach._id.toString() !== req.user.id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to add this client's workoutSessions" })
         }
-
-        const addWorkoutSession = {
-            id: id,
-            title: title,
-            exercises: exercises
-        }
-
-        const updatedTrainingPlan = await TrainingPlan.findOneAndUpdate({ client: clientId }, { $push: { workoutSessions: addWorkoutSession } }, { new: true })
+        
+        const updatedTrainingPlan = await TrainingPlan.findOneAndUpdate({ client: clientId }, { $push: { workoutSessions: addToWorkoutSession } }, { new: true })
         res.status(201).json(updatedTrainingPlan)
     } catch (err) {
         console.log(err)

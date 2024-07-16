@@ -102,31 +102,38 @@ nutritionPlanCtrl.addMealPlans = async (req, res) => {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() })
         }
-        const { mealPlans } = req.body
+        const { title, meals } = req.body
         const clientId = req.params.clientId
-
+        const id = uuidv4()
+        const addToNutritionPlan = {
+            id: id,
+            title: title,
+            meals: meals
+        }
         const findClient = await Client.findOne({ user: clientId })
         if (!findClient) {
             return res.status(404).json({ errors: 'Client not found' })
         }
         if (findClient.coach._id.toString() !== req.user.id.toString()) {
-            return res.status(404).json({ errors: "You are not authorized to add this client's Meal Plans" })
+            return res.status(404).json({ errors: "You are not authorized to add this client's meal plans" })
         }
 
-        if (!mealPlans.id) {
-            mealPlans.id = uuidv4()
-        }
-        const updateNutritionPlan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $push: { mealPlans: mealPlans } }, { new: true })
+        const updateNutritionPlan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $push: { mealPlans: addToNutritionPlan } }, { new: true })
         res.status(201).json(updateNutritionPlan)
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-
+ 
 // nutritionPlanCtrl.updateMealPlans = async (req, res) => {
 //     try {
-
+//         const errors = validationResult(req)
+//         if (!errors.isEmpty()) {
+//             return res.status(400).json({ errors: errors.array() })
+//         }
+//         const {title, meals} = req.body
+//         const {clientId, mealPlansId} = req.params
 //     } catch (err) {
 //         res.status(500).json({ errors: 'Something went wrong' })
 //     }

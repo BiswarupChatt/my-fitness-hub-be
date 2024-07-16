@@ -35,7 +35,7 @@ const mealSchema = new Schema({
         type: String,
         default: ''
     }
-})
+}, { _id: false })
 
 const mealPlanSchema = new Schema({
     id: {
