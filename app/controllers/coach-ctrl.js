@@ -1,8 +1,10 @@
 const Coach = require('../models/coach-model')
+const User = require('../models/user-model')
 const _ = require('lodash')
 const { validationResult } = require('express-validator')
 const Client = require('../models/client-model')
-
+const jwt = require('jsonwebtoken')
+const { sendInvitationEmail } = require('../utility/nodeMailer')
 const coachCtrl = {}
 
 coachCtrl.getMy = async (req, res) => {
@@ -23,16 +25,16 @@ coachCtrl.getAllCLient = async (req, res) => {
     }
 }
 
-coachCtrl.getSingleCLient = async(req, res) =>{
-    try{
-        const client =  await Client.findOne({user: req.params.userId}).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
-        if(req.user.id === client.coach._id){
+coachCtrl.getSingleCLient = async (req, res) => {
+    try {
+        const client = await Client.findOne({ user: req.params.userId }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
+        if (req.user.id === client.coach._id) {
             return res.status(201).json(client)
-        }else{
-            res.status(404).json({errors: "You're not authorized to see the details"})
+        } else {
+            res.status(404).json({ errors: "You're not authorized to see the details" })
         }
-    }catch(err){
-        res.status(500).json({errors: "Something went wrong"})
+    } catch (err) {
+        res.status(500).json({ errors: "Something went wrong" })
     }
 }
 
@@ -56,6 +58,23 @@ coachCtrl.verification = async (req, res) => {
         const coach = await Coach.findOneAndUpdate({ user: body.user }, body, { new: true })
         res.status(201).json(coach)
     } catch (err) {
+        res.status(500).json({ errors: "Something went wrong" })
+    }
+}
+
+coachCtrl.sendInvitationEmail = async (req, res) => {
+    try {
+        const { email } = req.body
+        const user = await User.findOne({ email: email })
+        const coachDetails = await User.findById(req.user.id)
+        if (user) {
+            return res.status(400).json({ errors: "User already exists" })
+        }
+        const token = jwt.sign({ email: email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_SEND_INVITATION_EXPIRE })
+        sendInvitationEmail(email, token, coachDetails.firstName, coachDetails.lastName)
+        return res.status(200).json({ message: "Email Sent Successfully", token: token })
+    } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: "Something went wrong" })
     }
 }

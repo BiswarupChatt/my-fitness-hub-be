@@ -1,38 +1,34 @@
 
-// const Coach = require('../models/coach-model')
-
-
-
 const coachUpdateValidation = {
-    
+
     phoneNumber: {
         in: ['body'],
-        isMobilePhone:{
+        isMobilePhone: {
             errorMessage: "Phone Number must be valid"
         },
-        isLength:{
-            options:{
+        isLength: {
+            options: {
                 min: 10,
                 max: 10
             },
             errorMessage: "Phone Number must be Ten Digits"
         }
-    }, 
+    },
     dateOfBirth: {
         in: ['body'],
-        isDate:{
+        isDate: {
             errorMessage: "Date od birth must be as a date format"
         },
-        custom:{
-            options: (value)=>{
+        custom: {
+            options: (value) => {
                 const date = new Date(value)
                 const today = new Date()
-                if(date> today){
+                if (date > today) {
                     throw new Error('Date of birth cannot be in the future')
-                }return true
+                } return true
             }
         }
-    }, 
+    },
     gender: {
         in: ['body'],
         isIn: {
@@ -45,14 +41,14 @@ const coachUpdateValidation = {
         isFloat: {
             errorMessage: 'Weight must be a number'
         }
-    }, 
+    },
     height: {
         in: ['body'],
         isFloat: {
             errorMessage: 'height must be a number'
         }
     },
-    "bankDetails.accName":{
+    "bankDetails.accName": {
         in: ['body'],
         optional: true,
         isString: {
@@ -60,7 +56,7 @@ const coachUpdateValidation = {
         },
         trim: true
     },
-    "bankDetails.accNumber":{
+    "bankDetails.accNumber": {
         in: ['body'],
         optional: true,
         isString: {
@@ -68,7 +64,7 @@ const coachUpdateValidation = {
         },
         trim: true
     },
-    "bankDetails.ifscCode":{
+    "bankDetails.ifscCode": {
         in: ['body'],
         optional: true,
         isString: {
@@ -76,8 +72,20 @@ const coachUpdateValidation = {
         },
         trim: true
     }
-    
+
+}
+
+const invitationEmailValidation = {
+    email: {
+        in: ['body'],
+        isEmail: {
+            errorMessage: "Email must be in a valid format"
+        },
+        notEmpty: {
+            errorMessage: "Email cannot be empty"
+        },
+    }
 }
 
 
-module.exports = {coachUpdateValidation}
+module.exports = { coachUpdateValidation, invitationEmailValidation }

@@ -17,7 +17,7 @@ const nutritionPlanCtrl = require('./app/controllers/nutritionPlan-ctrl')
 const progressCtrl = require('./app/controllers/progress-ctrl')
 
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
-const { coachUpdateValidation } = require('./app/validations/coach-validations')
+const { coachUpdateValidation, invitationEmailValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
 const { questionValidation } = require('./app/validations/question-validations')
 const { answerValidations, answerUpdateValidations } = require('./app/validations/answer-validations')
@@ -57,9 +57,9 @@ app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileIma
 app.get('/coach', authenticateUser, authorizeUser(['coach']), coachCtrl.getMy)
 app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachUpdateValidation), coachCtrl.update)
 app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach']), coachCtrl.getAllCLient)
-app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coach']), coachCtrl.getSingleCLient)
 app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
-//todo send invitation email to client
+app.post('/coach/sendInvitationEmail', authenticateUser, authorizeUser(['coach']), checkSchema(invitationEmailValidation), coachCtrl.sendInvitationEmail)
+app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coach']), coachCtrl.getSingleCLient)
 
 
 app.put('/client', authenticateUser, authorizeUser(['client']), checkSchema(clientUpdateValidations), clientCtrl.update)
