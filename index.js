@@ -81,13 +81,13 @@ app.delete('/answer/:_id', authenticateUser, authorizeUser(['client']), answerCt
 
 
 app.post('/workout', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.create)
-app.get('/workout/', authenticateUser, authorizeUser(['coach', 'admin']), workoutCtrl.get)
+app.get('/workout', authenticateUser, authorizeUser(['coach', 'admin']), workoutCtrl.get)
 app.put('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutValidation), workoutCtrl.update)
 app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']), workoutCtrl.delete)
 
 
 app.post('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.create)
-app.get('/food-item/:coachId?', authenticateUser, foodItemCtrl.get)
+app.get('/food-item', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.get)
 app.put('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(foodItemValidation), foodItemCtrl.update)
 app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.delete)
 
