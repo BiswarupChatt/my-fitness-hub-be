@@ -115,7 +115,7 @@ nutritionPlanCtrl.addMealPlans = async (req, res) => {
             return res.status(404).json({ errors: 'Client not found' })
         }
         if (findClient.coach._id.toString() !== req.user.id.toString()) {
-            return res.status(404).json({ errors: "You are not authorized to add this client's meal plans" })
+            return res.status(404).json({ errors: "You are not authorized to add this client's mealPlans" })
         }
 
         const updateNutritionPlan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $push: { mealPlans: addToNutritionPlan } }, { new: true })
@@ -125,19 +125,42 @@ nutritionPlanCtrl.addMealPlans = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
- 
-// nutritionPlanCtrl.updateMealPlans = async (req, res) => {
-//     try {
-//         const errors = validationResult(req)
-//         if (!errors.isEmpty()) {
-//             return res.status(400).json({ errors: errors.array() })
-//         }
-//         const {title, meals} = req.body
-//         const {clientId, mealPlansId} = req.params
-//     } catch (err) {
-//         res.status(500).json({ errors: 'Something went wrong' })
-//     }
-// }
+
+nutritionPlanCtrl.updateMealPlans = async (req, res) => {
+    try {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() })
+        }
+        const { title, meals } = req.body
+        const { clientId, mealPlansId } = req.params
+
+        const findClient = await Client.findOne({ user: clientId })
+        if (!findClient) {
+            return res.status(404).json({ errors: 'Client not found' })
+        }
+        if (findClient.coach._id.toString() !== req.user.id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to update this client's mealPlans" })
+        }
+        const nutritionPlan = await NutritionPlan.findOne({ client: clientId })
+        if (!nutritionPlan) {
+            return res.status(404).json({ errors: 'Nutrition plan not found' })
+        }
+        const sessionIndex = nutritionPlan.mealPlans.findIndex((ele) => {
+            return ele.id === mealPlansId
+        })
+        if (sessionIndex === -1) {
+            return res.status(404).json({ errors: 'Meal Plans ID not found' })
+        }
+        nutritionPlan.mealPlans[sessionIndex].title = title
+        nutritionPlan.mealPlans[sessionIndex].meals = meals
+
+        await nutritionPlan.save()
+        res.status(200).json(nutritionPlan)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
 
 // nutritionPlanCtrl.deleteMealPlans = async (req, res) => {
 //     try {

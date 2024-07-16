@@ -90,10 +90,10 @@ app.delete('/workout/:_id', authenticateUser, authorizeUser(['coach', 'admin']),
 
 app.post('/training-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(trainingPlanValidations), trainingPlanCtrl.create)
 app.get('/training-plan/:clientId?', authenticateUser, trainingPlanCtrl.get)
-app.put('/training-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach']), trainingPlanCtrl.updateAdditionalNotes)
-app.post('/training-plan/:clientId/addWorkoutSession', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.addWorkoutSession)
-app.put('/training-plan/:clientId/updateWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), checkSchema(workoutSessionValidation), trainingPlanCtrl.updateWorkoutSession)
-app.delete('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach']), trainingPlanCtrl.deleteWorkoutSession)
+app.put('/training-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach', 'admin']), trainingPlanCtrl.updateAdditionalNotes)
+app.post('/training-plan/:clientId/addWorkoutSession', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutSessionValidation), trainingPlanCtrl.addWorkoutSession)
+app.put('/training-plan/:clientId/updateWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(workoutSessionValidation), trainingPlanCtrl.updateWorkoutSession)
+app.delete('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach', 'admin']), trainingPlanCtrl.deleteWorkoutSession)
 
 
 app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
@@ -108,10 +108,11 @@ app.put('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), 
 app.delete('/food-item/:_id', authenticateUser, authorizeUser(['coach', 'admin']), foodItemCtrl.delete)
 
 
-app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
+app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
 app.get('/nutrition-plan/:clientId?', authenticateUser, nutritionPlanCtrl.get)
-app.put('/nutrition-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach']), nutritionPlanCtrl.updateAdditionalNotes)
-app.put('/nutrition-plan/:clientId/addMealPlan', authenticateUser, authorizeUser(['coach']), checkSchema(mealPlansValidations), nutritionPlanCtrl.addMealPlans)
+app.put('/nutrition-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach', 'admin']), nutritionPlanCtrl.updateAdditionalNotes)
+app.post('/nutrition-plan/:clientId/addMealPlan', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlansValidations), nutritionPlanCtrl.addMealPlans)
+app.put('/nutrition-plan/:clientId/updateMealPlan/:mealPlansId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlansValidations), nutritionPlanCtrl.updateMealPlans)
 
 
 app.listen(port, () => {
