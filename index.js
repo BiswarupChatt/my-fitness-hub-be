@@ -67,9 +67,7 @@ app.get('/client', authenticateUser, authorizeUser(['client']), clientCtrl.getMy
 
 
 app.post('/question', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.create)
-///todo combine both the get method
-app.get('/question', authenticateUser, questionCtrl.getDefault)
-app.get('/question/:coachId', authenticateUser, questionCtrl.get)
+app.get('/question/:coachId?', authenticateUser, questionCtrl.get)
 app.put('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.update)
 app.delete('/question/:_id', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(questionValidation), questionCtrl.delete)
 

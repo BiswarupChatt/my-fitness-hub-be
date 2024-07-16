@@ -31,23 +31,21 @@ questionCtrl.create = async (req, res) => {
     }
 }
 
-questionCtrl.getDefault = async (req, res) => {
-    try {
-        const question = await Question.find({ isDefault: true }).populate("coach", "_id firstName lastName email role")
-        res.status(201).json(question)
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
-
 questionCtrl.get = async (req, res) => {
     try {
-        const question = await Question.find({ coach: req.params.coachId }).populate("coach", "_id firstName lastName email role")
-        res.status(201).json(question)
+        const DefaultQuestion = await Question.find({ isDefault: true }).populate("coach")
+        let coachId
+        if(req.user.role === 'client'){
+            coachId = req.params.coachId
+        }else{
+            coachId = req.user.id
+        }
+        const question = coachId ? await Question.find({ coach: coachId }).populate("coach") : []
+        const all = DefaultQuestion.concat(question)
+        res.status(201).json(all)
     } catch (err) {
         console.log(err)
-        res.status(500).json({ errors: 'Something went wrong' })
+        res.status(500).json({ errors: 'Something went wrong.' })
     }
 }
 
