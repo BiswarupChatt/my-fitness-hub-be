@@ -68,7 +68,6 @@ const trainingPlanValidations = {
             errorMessage: 'Note must be a string'
         }
     },
-
 }
 
 
@@ -129,7 +128,6 @@ const workoutSessionValidation = {
             errorMessage: 'Note must be a string'
         }
     },
-
 }
 
 
