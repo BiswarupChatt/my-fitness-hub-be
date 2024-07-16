@@ -35,9 +35,9 @@ questionCtrl.get = async (req, res) => {
     try {
         const DefaultQuestion = await Question.find({ isDefault: true }).populate("coach")
         let coachId
-        if(req.user.role === 'client'){
+        if (req.user.role === 'client') {
             coachId = req.params.coachId
-        }else{
+        } else {
             coachId = req.user.id
         }
         const question = coachId ? await Question.find({ coach: coachId }).populate("coach") : []
