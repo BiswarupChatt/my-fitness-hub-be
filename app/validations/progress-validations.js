@@ -1,4 +1,3 @@
-
 const progressValidation = {
     date: {
         in: ['body'],

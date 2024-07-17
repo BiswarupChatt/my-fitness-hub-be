@@ -1,8 +1,8 @@
-const Progress = require('../models/progress-model')
+progressCtrl = {}
 const Client = require('../models/client-model')
+const Progress = require('../models/progress-model')
 const { validationResult } = require('express-validator')
 
-progressCtrl = {}
 
 progressCtrl.create = async (req, res) => {
     const errors = validationResult(req)
@@ -79,7 +79,6 @@ progressCtrl.update = async (req, res) => {
     }
 }
 
-
 progressCtrl.delete = async (req, res)=>{
     try{
         const findProgress = await Progress.findById(req.params._id)
@@ -97,6 +96,5 @@ progressCtrl.delete = async (req, res)=>{
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-
 
 module.exports = progressCtrl

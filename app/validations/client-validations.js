@@ -1,18 +1,4 @@
-// const Client = require('../models/client-model')
-
 const clientUpdateValidations = {
-    // user: {
-    //     in: ['body'],
-    //     isMongoId:{
-    //         errorMessage: "user must be a valid Mongo ID"
-    //     }
-    // },
-    // coach: {
-    //     in: ['body'],
-    //     isMongoId:{
-    //         errorMessage: "user must be a valid Mongo ID"
-    //     }
-    // },
     phoneNumber: {
         in: ['body'],
         isMobilePhone:{

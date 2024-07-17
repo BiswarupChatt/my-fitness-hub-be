@@ -1,4 +1,3 @@
-
 const questionValidation = {
     title: {
         in: ['body'],
@@ -11,6 +10,5 @@ const questionValidation = {
         trim: true
     }
 }
-
 
 module.exports = { questionValidation }

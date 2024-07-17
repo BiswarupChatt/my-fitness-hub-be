@@ -70,7 +70,6 @@ const trainingPlanValidations = {
     },
 }
 
-
 const workoutSessionValidation = {
     title: {
         in: ['body'],
@@ -129,6 +128,5 @@ const workoutSessionValidation = {
         }
     },
 }
-
 
 module.exports = { trainingPlanValidations, workoutSessionValidation }

@@ -1,7 +1,7 @@
+const workoutCtrl = {}
 const Workout = require('../models/workout-model')
 const { validationResult } = require('express-validator')
 
-const workoutCtrl = {}
 
 workoutCtrl.create = async (req, res) => {
     const errors = validationResult(req)

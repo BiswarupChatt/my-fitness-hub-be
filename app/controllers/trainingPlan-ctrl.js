@@ -1,9 +1,9 @@
+const trainingPlanCtrl = {}
 const { v4: uuidv4 } = require('uuid')
 const Client = require('../models/client-model')
 const { validationResult } = require('express-validator')
 const TrainingPlan = require('../models/trainingPlan-model')
 
-const trainingPlanCtrl = {}
 
 trainingPlanCtrl.create = async (req, res) => {
     const errors = validationResult(req)
@@ -168,7 +168,6 @@ trainingPlanCtrl.updateWorkoutSession = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-
 
 trainingPlanCtrl.deleteWorkoutSession = async (req, res) => {
     try {

@@ -1,7 +1,7 @@
+const foodItemCtrl = {}
 const FoodItem = require('../models/foodItem-model')
 const { validationResult } = require('express-validator')
 
-const foodItemCtrl = {}
 
 foodItemCtrl.create = async (req, res) => {
     const errors = validationResult(req)
@@ -36,7 +36,6 @@ foodItemCtrl.create = async (req, res) => {
     }
 }
 
-
 foodItemCtrl.get = async (req, res) => {
     try {
         const defaultFoodItem = await FoodItem.find({ isDefault: true }).populate("coach")
@@ -47,7 +46,6 @@ foodItemCtrl.get = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-
 
 foodItemCtrl.update = async (req, res) => {
     try {
@@ -77,7 +75,6 @@ foodItemCtrl.update = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-
 
 foodItemCtrl.delete = async (req, res) => {
     try {

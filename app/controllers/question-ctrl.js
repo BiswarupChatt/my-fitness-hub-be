@@ -1,7 +1,7 @@
+const questionCtrl = {}
 const Question = require('../models/question-model')
 const { validationResult } = require('express-validator')
 
-const questionCtrl = {}
 
 questionCtrl.create = async (req, res) => {
     const errors = validationResult(req)

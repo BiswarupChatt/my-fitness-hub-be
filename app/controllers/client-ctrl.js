@@ -1,18 +1,9 @@
-const Client = require('../models/client-model')
+const clientCtrl = {}
 const _ = require("lodash")
+const Client = require('../models/client-model')
 const { validationResult } = require('express-validator')
 
-const clientCtrl = {}
 
-clientCtrl.getMy = async (req, res) => {
-    try {
-        const client = await Client.find({ user: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
-        return res.status(200).json(client)
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ errors: "Something went wrong" })
-    }
-}
 
 clientCtrl.update = async (req, res) => {
     const errors = validationResult(req)
@@ -23,6 +14,16 @@ clientCtrl.update = async (req, res) => {
         const body = _.pick(req.body, ['phoneNumber', 'dateOfBirth', 'gender', 'weight', 'height'])
         const client = await Client.findOneAndUpdate({ user: req.user.id }, body, { new: true })
         res.status(201).json(client)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ errors: "Something went wrong" })
+    }
+}
+
+clientCtrl.getMy = async (req, res) => {
+    try {
+        const client = await Client.find({ user: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
+        return res.status(200).json(client)
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: "Something went wrong" })

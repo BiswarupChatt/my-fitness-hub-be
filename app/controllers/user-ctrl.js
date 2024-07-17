@@ -9,7 +9,60 @@ const { validationResult } = require('express-validator')
 const uploadToCloudinary = require('../utility/cloudinary')
 const { welcomeEmail, forgetPasswordMail } = require('../utility/nodeMailer')
 
-// Registering as a coach
+
+userCtrl.getAccount = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id)
+        const newUser = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'profileImage', 'createdAt', 'updatedAt'])
+        return res.status(201).json(newUser)
+    } catch (err) {
+        res.status(500).json({ errors: "Something went wrong" })
+    }
+}
+
+userCtrl.updateAccount = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+    try {
+        const body = _.pick(req.body, ['firstName', 'lastName', 'email'])
+        const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
+        return res.status(201).json(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt']))
+    } catch (err) {
+        res.status(500).json({ errors: "Something went wrong" })
+    }
+}
+
+userCtrl.login = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+
+    try {
+        const body = req.body
+        const user = await User.findOne({ email: body.email })
+        if (user) {
+            const isAuth = await bcryptjs.compare(body.password, user.password)
+            if (isAuth) {
+                const tokenData = {
+                    id: user._id,
+                    role: user.role
+                }
+                const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LOGIN_EXPIRE })
+                return res.status(200).json({ token })
+            } else {
+                return res.status(500).json({ errors: 'Invalid Credentials' })
+            }
+        } else {
+            return res.status(500).json({ errors: 'Invalid Credentials' })
+        }
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 userCtrl.coachRegister = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -37,7 +90,6 @@ userCtrl.coachRegister = async (req, res) => {
     }
 }
 
-// Registering as a client
 userCtrl.clientRegister = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -73,37 +125,6 @@ userCtrl.clientRegister = async (req, res) => {
     }
 }
 
-// Login 
-userCtrl.login = async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-    }
-
-    try {
-        const body = req.body
-        const user = await User.findOne({ email: body.email })
-        if (user) {
-            const isAuth = await bcryptjs.compare(body.password, user.password)
-            if (isAuth) {
-                const tokenData = {
-                    id: user._id,
-                    role: user.role
-                }
-                const token = jwt.sign(tokenData, process.env.JWT_SECRET, { expiresIn: process.env.JWT_LOGIN_EXPIRE })
-                return res.status(200).json({ token })
-            } else {
-                return res.status(500).json({ errors: 'Invalid Credentials' })
-            }
-        } else {
-            return res.status(500).json({ errors: 'Invalid Credentials' })
-        }
-    } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
-
-// Forget Password
 userCtrl.forgetPassword = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -126,7 +147,6 @@ userCtrl.forgetPassword = async (req, res) => {
     }
 }
 
-// Reset Password
 userCtrl.resetPassword = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -153,33 +173,6 @@ userCtrl.resetPassword = async (req, res) => {
     }
 }
 
-// Getting Account Details
-userCtrl.getAccount = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id)
-        const newUser = _.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'profileImage', 'createdAt', 'updatedAt'])
-        return res.status(201).json(newUser)
-    } catch (err) {
-        res.status(500).json({ errors: "Something went wrong" })
-    }
-}
-
-// Updating Account Details
-userCtrl.updateAccount = async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-    }
-    try {
-        const body = _.pick(req.body, ['firstName', 'lastName', 'email'])
-        const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
-        return res.status(201).json(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt']))
-    } catch (err) {
-        res.status(500).json({ errors: "Something went wrong" })
-    }
-}
-
-// Updating Profile Image
 userCtrl.profileImageUpdate = async (req, res) => {
     try {
         if (req.file) {

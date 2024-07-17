@@ -1,10 +1,9 @@
+nutritionPlanCtrl = {}
 const { v4: uuidv4 } = require('uuid')
-const NutritionPlan = require('../models/nutritionPlan-model')
 const Client = require('../models/client-model')
 const { validationResult } = require('express-validator')
-const TrainingPlan = require('../models/trainingPlan-model')
+const NutritionPlan = require('../models/nutritionPlan-model')
 
-nutritionPlanCtrl = {}
 
 nutritionPlanCtrl.create = async (req, res) => {
     const errors = validationResult(req)
