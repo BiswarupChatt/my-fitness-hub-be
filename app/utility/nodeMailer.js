@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer')
+const { forgetPasswordStyling } = require('./emailTemplateDesign')
 
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -32,6 +33,7 @@ const welcomeEmail = (userEmail) => {
                 </body>
             </html>
            `
+
     }
 
     transporter.sendMail(mailBody, (error, info) => {
@@ -48,29 +50,30 @@ const forgetPasswordMail = (email, token) => {
         from: process.env.NODEMAILER_EMAIL,
         to: email,
         subject: "Reset Password",
-        html: `
-            <html>
-                <head>
-                    <style>
-                        h1 {color: #2c3e50; }
-                        p {font-size: 16px; color: #34495e; }
-                        a {display: inline-block; background-color: #3498db; text-color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
-                        .link-container { margin: 20px 0; }
-                        .note {font-size: 14px; color: #7f8c8d; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Reset Your Password</h1>
-                    <p>Click on the following link to reset your password:</p>
-                    <div class="link-container">
-                        <a href="http://localhost:4040/users/resetPassword/${token}">Reset Password</a>
-                    </div>
-                    <p class="note">The link will expire in 10 minutes.</p>
-                    <p class="note">If you didn't request a password reset, please ignore this email.</p>
-                    <p>Best Regards,<br />The My Fitness Hub Team</p>
-                </body>
-            </html>
-            `
+        html: forgetPasswordStyling(token)
+        // html: `
+        //     <html>
+        //         <head>
+        //             <style>
+        //                 h1 {color: #2c3e50; }
+        //                 p {font-size: 16px; color: #34495e; }
+        //                 a {display: inline-block; background-color: #3498db; text-color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+        //                 .link-container { margin: 20px 0; }
+        //                 .note {font-size: 14px; color: #7f8c8d; }
+        //             </style>
+        //         </head>
+        //         <body>
+        //             <h1>Reset Your Password</h1>
+        //             <p>Click on the following link to reset your password:</p>
+        //             <div class="link-container">
+        //                 <a href="http://localhost:4040/users/resetPassword/${token}">Reset Password</a>
+        //             </div>
+        //             <p class="note">The link will expire in 10 minutes.</p>
+        //             <p class="note">If you didn't request a password reset, please ignore this email.</p>
+        //             <p>Best Regards,<br />The My Fitness Hub Team</p>
+        //         </body>
+        //     </html>
+        //     `
     }
     transporter.sendMail(mailBody, (error, info) => {
         if (error) {

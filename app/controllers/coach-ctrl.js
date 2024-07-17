@@ -71,7 +71,9 @@ coachCtrl.sendInvitationEmail = async (req, res) => {
             return res.status(400).json({ errors: "User already exists" })
         }
         const token = jwt.sign({ coachId: req.user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_SEND_INVITATION_EXPIRE })
+
         sendInvitationEmail(email, token, coachDetails.firstName, coachDetails.lastName)
+        
         return res.status(200).json({ message: "Email Sent Successfully", token: token })
     } catch (err) {
         console.log(err)

@@ -48,7 +48,7 @@ app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), u
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
 app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)
 //todo replace coachId with jwt token
-app.post('/users/register/client/:coachId', checkSchema(userRegisterValidations), userCtrl.clientRegister)
+app.post('/users/register/client/:token', checkSchema(userRegisterValidations), userCtrl.clientRegister)
 app.post('/users/forgetPassword', checkSchema(userForgetPasswordValidation), userCtrl.forgetPassword)
 app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), userCtrl.resetPassword)
 app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileImage'), userCtrl.profileImageUpdate)

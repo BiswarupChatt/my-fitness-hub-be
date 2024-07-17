@@ -48,8 +48,11 @@ userCtrl.clientRegister = async (req, res) => {
         const salt = await bcryptjs.genSalt()
         const hashPassword = await bcryptjs.hash(body.password, salt)
         const userRole = "client"
-
-        const coach = await Coach.findOne({ user: req.params.coachId })
+        const decodedToken = jwt.verify(req.params.token, process.env.JWT_SECRET)
+        if (!decodedToken) {
+            return res.status(404).json({ errors: 'Invalid Link' })
+        }
+        const coach = await Coach.findOne({ user: decodedToken.coachId })
         if (!coach) {
             return res.status(400).json({ errors: 'Invalid coach ID' })
         }
