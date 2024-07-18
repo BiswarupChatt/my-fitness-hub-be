@@ -115,6 +115,7 @@ app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progre
 
 app.post('/program', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(programValidation), programCtrl.create)
 app.get('/program', authenticateUser, authorizeUser(['coach', 'admin']), programCtrl.get)
+app.put('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(programValidation), programCtrl.update)
 
 
 app.listen(port, () => {
