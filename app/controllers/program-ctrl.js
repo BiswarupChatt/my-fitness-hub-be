@@ -61,7 +61,23 @@ programCtrl.update = async (req, res) => {
         const updatedProgramData = await Program.findByIdAndUpdate(req.params._id, programData, { new: true })
         res.status(201).json(updatedProgramData)
     } catch (err) {
-        console.log(err)
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
+
+programCtrl.delete = async (req, res) => {
+    try {
+        const findProgram = await Program.findById(req.params._id)
+        if (!findProgram) {
+            return res.status(404).json({ errors: "Program not found" })
+        }
+        if (findProgram.coach._id.toString() !== req.user.id.toString()) {
+            return res.status(404).json({ errors: "You are not authorized to delete program" })
+        }
+        const updatedProgramData = await Program.findByIdAndDelete(req.params._id)
+        res.status(201).json(updatedProgramData)
+    } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
