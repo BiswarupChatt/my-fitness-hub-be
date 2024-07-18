@@ -1,7 +1,7 @@
-const Program = require('../models/program-model')
-const Coach = require('../models/coach-model')
-const { validationResult } = require('express-validator')
 const programCtrl = {}
+const Coach = require('../models/coach-model')
+const Program = require('../models/program-model')
+const { validationResult } = require('express-validator')
 
 
 programCtrl.create = async (req, res) => {
@@ -81,7 +81,6 @@ programCtrl.delete = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
-
 
 
 module.exports = programCtrl
