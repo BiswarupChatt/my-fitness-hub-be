@@ -11,6 +11,10 @@ progressCtrl.create = async (req, res) => {
     }
 
     try {
+        const findClient = await Client.findOne({ user: req.user.id })
+        if (!findClient) {
+            return res.status(400).json({ errors: "Client doesn't exists" })
+        }
         const progressData = {
             client: req.user.id,
             date: req.body.date,
@@ -20,10 +24,6 @@ progressCtrl.create = async (req, res) => {
             hips: req.body.hips,
             thigh: req.body.thigh,
             bicep: req.body.bicep
-        }
-        const findClient = await Client.findOne({ user: req.user.id })
-        if (!findClient) {
-            return res.status(400).json({ errors: "Client doesn't exists" })
         }
         const progress = new Progress(progressData)
         await progress.save()
@@ -70,7 +70,7 @@ progressCtrl.update = async (req, res) => {
         if (findProgress.client._id.toString() !== req.user.id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to update progress" })
         }
-        
+
         const updatedProgress = await Progress.findByIdAndUpdate(req.params._id, progressData, { new: true })
 
         res.status(201).json(updatedProgress)
@@ -79,8 +79,8 @@ progressCtrl.update = async (req, res) => {
     }
 }
 
-progressCtrl.delete = async (req, res)=>{
-    try{
+progressCtrl.delete = async (req, res) => {
+    try {
         const findProgress = await Progress.findById(req.params._id)
         if (!findProgress) {
             return res.status(404).json({ errors: "Progress record not found" })
@@ -88,11 +88,11 @@ progressCtrl.delete = async (req, res)=>{
         if (findProgress.client._id.toString() !== req.user.id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to delete progress" })
         }
-        
+
         const deletedProgress = await Progress.findByIdAndDelete(req.params._id)
 
         res.status(201).json(deletedProgress)
-    }catch(err){
+    } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }

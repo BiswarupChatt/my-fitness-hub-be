@@ -15,6 +15,7 @@ const foodItemCtrl = require('./app/controllers/foodItem-ctrl')
 const trainingPlanCtrl = require('./app/controllers/trainingPlan-ctrl')
 const nutritionPlanCtrl = require('./app/controllers/nutritionPlan-ctrl')
 const progressCtrl = require('./app/controllers/progress-ctrl')
+const programCtrl = require('./app/controllers/program-ctrl')
 
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 const { coachUpdateValidation, invitationEmailValidation } = require('./app/validations/coach-validations')
@@ -26,6 +27,7 @@ const { foodItemValidation } = require('./app/validations/foodItem-validation')
 const { trainingPlanValidations, workoutSessionValidation } = require('./app/validations/trainingPlan-validations')
 const { nutritionPlanValidation, mealPlansValidations } = require('./app/validations/nutritionPlan-validation')
 const { progressValidation, progressUpdateValidation } = require('./app/validations/progress-validations')
+const { programValidation } = require('./app/validations/program-validations')
 
 const upload = require('./app/middlewares/multer')
 const authorizeUser = require('./app/middlewares/authorizeUser')
@@ -109,6 +111,10 @@ app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(p
 app.get('/progress/:clientId?', authenticateUser, progressCtrl.get)
 app.put('/progress/:_id', authenticateUser, authorizeUser(['client']), checkSchema(progressUpdateValidation), progressCtrl.update)
 app.delete('/progress/:_id', authenticateUser, authorizeUser(['client']), progressCtrl.delete)
+
+
+app.post('/program', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(programValidation), programCtrl.create)
+app.get('/program', authenticateUser, authorizeUser(['coach', 'admin']), programCtrl.get)
 
 
 app.listen(port, () => {
