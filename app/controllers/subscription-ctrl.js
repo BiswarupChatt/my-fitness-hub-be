@@ -15,7 +15,7 @@ subscriptionCtrl.createOrder = async (req, res) => {
         currency: "INR",
         receipt: `receipt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
         notes: {
-            coachId: req.user.id,
+            user: req.user.id,
             plan: plan
         }
     }
@@ -36,6 +36,21 @@ subscriptionCtrl.createOrder = async (req, res) => {
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
+subscriptionCtrl.verifyOrder = async (req, res) => {
+    const { order_id, payment_id, signature, subscriptionId, coachId } = req.body
+    const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY).update(`${order_id}|${payment_id}`).digest('hex')
+    if (generatedSignature === signature) {
+        await Subscription.findOneAndUpdate({orderId: order_id}, {
+            paymentId: payment_id,
+            status: 'success',
+        })
+        res.json({ status: 'success' })
+    } else {
+        await Subscription.findByIdAndUpdate(subscriptionId, { status: 'failed' });
+        res.status(400).send('Invalid signature')
     }
 }
 

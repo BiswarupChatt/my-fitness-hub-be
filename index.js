@@ -120,7 +120,8 @@ app.put('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']), ch
 app.delete('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']), programCtrl.delete)
 
 
-app.post('/create-order', authenticateUser, authorizeUser(['coach', 'admin']), subscriptionCtrl.createOrder)
+app.post('/create-order', subscriptionCtrl.createOrder)
+app.post('/verify-signature', subscriptionCtrl.verifyOrder)
 
 
 app.listen(port, () => {
