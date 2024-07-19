@@ -15,7 +15,7 @@ subscriptionCtrl.createOrder = async (req, res) => {
         currency: "INR",
         receipt: `receipt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
         notes: {
-            user: req.user.id,
+            userId: req.user.id,
             plan: plan
         }
     }
@@ -40,10 +40,10 @@ subscriptionCtrl.createOrder = async (req, res) => {
 }
 
 subscriptionCtrl.verifyOrder = async (req, res) => {
-    const { order_id, payment_id, signature, subscriptionId, coachId } = req.body
+    const { order_id, payment_id, signature, subscriptionId, userId } = req.body
     const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY).update(`${order_id}|${payment_id}`).digest('hex')
     if (generatedSignature === signature) {
-        await Subscription.findOneAndUpdate({orderId: order_id}, {
+        await Subscription.findOneAndUpdate({ coach: userId }, {
             paymentId: payment_id,
             status: 'success',
         })
