@@ -9,7 +9,7 @@ const subscriptionSchema = new Schema({
     },
     paymentId: {
         type: String,
-        required: true
+        default: ''
     },
     orderId: {
         type: String,

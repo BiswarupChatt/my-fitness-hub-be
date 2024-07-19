@@ -16,6 +16,7 @@ const trainingPlanCtrl = require('./app/controllers/trainingPlan-ctrl')
 const nutritionPlanCtrl = require('./app/controllers/nutritionPlan-ctrl')
 const progressCtrl = require('./app/controllers/progress-ctrl')
 const programCtrl = require('./app/controllers/program-ctrl')
+const subscriptionCtrl = require('./app/controllers/subscription-ctrl')
 
 const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 const { coachUpdateValidation, invitationEmailValidation } = require('./app/validations/coach-validations')
@@ -117,6 +118,9 @@ app.post('/program', authenticateUser, authorizeUser(['coach', 'admin']), checkS
 app.get('/program', authenticateUser, authorizeUser(['coach', 'admin']), programCtrl.get)
 app.put('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(programValidation), programCtrl.update)
 app.delete('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']), programCtrl.delete)
+
+
+app.post('/create-order', authenticateUser, authorizeUser(['coach', 'admin']), subscriptionCtrl.createOrder)
 
 
 app.listen(port, () => {
