@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {Schema, model} = mongoose
+const { Schema, model } = mongoose
 // const User = require('./user-model')
 
 
@@ -12,15 +12,26 @@ const coachSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    phoneNumber: Number, 
-    dateOfBirth: Date, 
+    phoneNumber: Number,
+    dateOfBirth: Date,
     gender: String,
-    weight: Number, 
-    height: Number, 
-    bankDetails: {
-        accName:  String,
-        accNumber: String,
-        ifscCode:  String
+    weight: Number,
+    height: Number,
+    payment: {
+        plan: {
+            type: String,
+            enum: ['monthly', 'yearly'],
+        },
+        isActive: {
+            type: Boolean,
+            default: false
+        },
+        startDate: Date,
+        endDate: Date,
+        subscriptionId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Subscription'
+        }
     }
 }, { timestamps: true })
 
