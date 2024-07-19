@@ -2,6 +2,7 @@ const coachUpdateValidation = {
 
     phoneNumber: {
         in: ['body'],
+        optional: true,
         isMobilePhone: {
             errorMessage: "Phone Number must be valid"
         },
@@ -15,6 +16,7 @@ const coachUpdateValidation = {
     },
     dateOfBirth: {
         in: ['body'],
+        optional: true,
         isDate: {
             errorMessage: "Date od birth must be as a date format"
         },
@@ -30,46 +32,27 @@ const coachUpdateValidation = {
     },
     gender: {
         in: ['body'],
+        optional: true,
         isIn: {
-            options: [['Male', 'Female']],
+            options: [['male', 'female', 'other']],
             errorMessage: 'Gender either should be a male or female'
         }
     },
     weight: {
         in: ['body'],
+        optional: true,
         isFloat: {
-            errorMessage: 'Weight must be a number'
+            options: { min: 0 },
+            errorMessage: 'Weight should be a positive number'
         }
     },
     height: {
         in: ['body'],
+        optional: true,
         isFloat: {
+            options: { min: 0 },
             errorMessage: 'height must be a number'
         }
-    },
-    "bankDetails.accName": {
-        in: ['body'],
-        optional: true,
-        isString: {
-            errorMessage: "Account name must be a string"
-        },
-        trim: true
-    },
-    "bankDetails.accNumber": {
-        in: ['body'],
-        optional: true,
-        isString: {
-            errorMessage: "Account number must be a string"
-        },
-        trim: true
-    },
-    "bankDetails.ifscCode": {
-        in: ['body'],
-        optional: true,
-        isString: {
-            errorMessage: "ifsc code must be a string"
-        },
-        trim: true
     }
 
 }

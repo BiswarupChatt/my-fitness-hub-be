@@ -2,6 +2,7 @@ const userCtrl = {}
 const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const bcryptjs = require('bcryptjs')
+const moment = require('moment-timezone')
 const User = require('../models/user-model')
 const Coach = require('../models/coach-model')
 const Client = require('../models/client-model')
@@ -77,8 +78,17 @@ userCtrl.coachRegister = async (req, res) => {
         await user.save()
         const newUser = await User.findOne({ email: req.body.email })
         if (newUser) {
+            const now = moment().tz('Asia/Kolkata')
+            const startDate = now.toDate()
+            const endDate = now.add(1, 'month').toDate()
             const coachData = {
-                user: newUser._id
+                user: newUser._id,
+                payment: {
+                    plan: 'monthly',
+                    isActive: true,
+                    startDate: startDate,
+                    endDate: endDate
+                }
             }
             const coach = new Coach(coachData)
             await coach.save()
