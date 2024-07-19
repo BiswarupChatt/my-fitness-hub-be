@@ -21,13 +21,20 @@ const coachSchema = new Schema({
         plan: {
             type: String,
             enum: ['monthly', 'yearly'],
+            default: 'monthly'
         },
         isActive: {
             type: Boolean,
             default: false
         },
-        startDate: Date,
-        endDate: Date,
+        startDate: {
+            type: Date,
+            required: true
+        },
+        endDate: {
+            type: Date,
+            required: true
+        },
         subscriptionId: {
             type: Schema.Types.ObjectId,
             ref: 'Subscription'
