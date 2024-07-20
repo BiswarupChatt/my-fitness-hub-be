@@ -35,10 +35,6 @@ const coachSchema = new Schema({
         endDate: {
             type: Date,
             required: true
-        },
-        subscriptionId: {
-            type: Schema.Types.ObjectId,
-            ref: 'Subscription'
         }
     }
 }, { timestamps: true })

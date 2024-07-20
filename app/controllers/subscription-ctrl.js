@@ -1,6 +1,8 @@
 const Subscription = require('../models/subscription-model')
+const Coach = require('../models/coach-model')
 const crypto = require('crypto')
 const Razorpay = require('razorpay')
+const moment = require('moment')
 const subscriptionCtrl = {}
 
 const razorpayInstance = new Razorpay({
@@ -44,8 +46,9 @@ subscriptionCtrl.createOrder = async (req, res) => {
 }
 
 subscriptionCtrl.verifyOrder = async (req, res) => {
-    const { order_id, payment_id, signature, subscriptionId, coachId, status } = req.body
+    const { order_id, payment_id, signature, subscriptionId, coachId, status, plan } = req.body
     try {
+
         if (status === 'failed') {
             try {
                 const findSubscription = await Subscription.findOneAndUpdate(
@@ -61,6 +64,7 @@ subscriptionCtrl.verifyOrder = async (req, res) => {
                 res.status(500).json({ errors: 'Something went wrong.' })
             }
         }
+
         const generatedSignature = crypto
             .createHmac('sha256', process.env.RAZORPAY_SECRET_KEY)
             .update(order_id + '|' + payment_id)
@@ -68,24 +72,57 @@ subscriptionCtrl.verifyOrder = async (req, res) => {
 
         if (generatedSignature === signature) {
             try {
+
                 const findSubscription = await Subscription.findOneAndUpdate({ orderId: order_id },
                     {
                         paymentId: payment_id,
                         status: 'success',
-                    }, 
+                    },
                     { new: true }
                 )
 
                 if (!findSubscription) {
                     return res.status(404).json({ errors: 'Subscription not found' })
                 }
- 
+
                 //todo INCOMPLETE, need to add logic to update coach payment details
+                const coach = await Coach.findOne({ user: coachId })
+                let endDate
+                let startDate
+                const currentDate = moment()
+                console.log(coach)
+                if (coach.payment.isActive === true) {
+                    startDate = moment(coach.payment.startDate)
+                    if (plan === 'monthly') {
+                        endDate = moment(coach.payment.endDate).add(1, 'month')
+                    } else if (plan === 'yearly') {
+                        endDate = moment(coach.payment.endDate).add(1, 'year')
+                    }
+                } else {
+                    startDate = currentDate
+                    if (plan === 'monthly') {
+                        endDate = currentDate.clone().add(1, 'month')
+                    } else if (plan === 'yearly') {
+                        endDate = currentDate.clone().add(1, 'year')
+                    }
+                }
+
+                const coachModelUpdate = await Coach.findOneAndUpdate({ user: coachId }, {
+                    'payment.isActive': true,
+                    'payment.startDate': startDate.toDate(),
+                    'payment.endDate': endDate.toDate()
+                }, { new: true })
+
+                if (!coachModelUpdate) {
+                    res.status(404).json({ errors: 'Coach not found.' })
+                }
 
                 res.status(201).json({ status: 'Payment successful' })
             } catch (err) {
+                console.log(err)
                 res.status(500).json({ errors: 'Something went wrong.' })
             }
+
         } else {
             try {
                 await Subscription.findOneAndUpdate(
