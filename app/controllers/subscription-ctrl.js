@@ -15,7 +15,9 @@ subscriptionCtrl.createOrder = async (req, res) => {
         currency: "INR",
         receipt: `receipt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
         notes: {
-            userId: req.user.id,
+            //todo need modification in userId
+            // userId: req.user.id,
+            userId: '6686c25a24c5ecd12b7e5c4b',
             plan: plan
         }
     }
@@ -23,7 +25,9 @@ subscriptionCtrl.createOrder = async (req, res) => {
     try {
         const order = await razorpayInstance.orders.create(options)
         const subscriptionData = {
-            coach: req.user.id,
+            //todo need modification in userId
+            // coach: req.user.id,
+            coach: '6686c25a24c5ecd12b7e5c4b',
             paymentId: '',
             orderId: order.id,
             amount: amount,
@@ -41,16 +45,30 @@ subscriptionCtrl.createOrder = async (req, res) => {
 
 subscriptionCtrl.verifyOrder = async (req, res) => {
     const { order_id, payment_id, signature, subscriptionId, userId } = req.body
-    const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY).update(`${order_id}|${payment_id}`).digest('hex')
+    const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY).update(order_id + '|' + payment_id).digest('hex')
+
+    console.log("generatedSignature called", generatedSignature)
+
     if (generatedSignature === signature) {
-        await Subscription.findOneAndUpdate({ coach: userId }, {
+        await Subscription.findOneAndUpdate({ orderId: order_id }, {
             paymentId: payment_id,
             status: 'success',
         })
         res.json({ status: 'success' })
+        //todo need to manage error more precisely 
+        //todo INCOMPLETE, need to add logic to update coach payment details
     } else {
-        await Subscription.findByIdAndUpdate(subscriptionId, { status: 'failed' });
+        await Subscription.findByIdAndUpdate({ orderId: order_id }, { status: 'failed' });
         res.status(400).send('Invalid signature')
+    }
+}
+
+subscriptionCtrl.get = async (req, res) => {
+    try {
+        const subscription = await Subscription.find({ coach: req.user.id }).populate('coach')
+        res.status(201).json(subscription)
+    } catch (err) {
+        res.status(500).json({ errors: 'Something went wrong.' })
     }
 }
 
