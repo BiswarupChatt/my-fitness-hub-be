@@ -15,9 +15,9 @@ subscriptionCtrl.createOrder = async (req, res) => {
         currency: "INR",
         receipt: `receipt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
         notes: {
-            //todo need modification in userId
-            // userId: req.user.id,
-            userId: '6686c25a24c5ecd12b7e5c4b',
+            //todo need modification in coachId
+            // coachId: req.user.id,
+            coachId: '6686c25a24c5ecd12b7e5c4b',
             plan: plan
         }
     }
@@ -25,7 +25,7 @@ subscriptionCtrl.createOrder = async (req, res) => {
     try {
         const order = await razorpayInstance.orders.create(options)
         const subscriptionData = {
-            //todo need modification in userId
+            //todo need modification in coachId
             // coach: req.user.id,
             coach: '6686c25a24c5ecd12b7e5c4b',
             paymentId: '',
@@ -44,31 +44,61 @@ subscriptionCtrl.createOrder = async (req, res) => {
 }
 
 subscriptionCtrl.verifyOrder = async (req, res) => {
-    const { order_id, payment_id, signature, subscriptionId, userId, status } = req.body
+    const { order_id, payment_id, signature, subscriptionId, coachId, status } = req.body
     try {
-
         if (status === 'failed') {
-            await Subscription.findOneAndUpdate({ orderId: order_id }, { status: 'failed' });
-            return res.status(400).send('Payment failed or dismissed by user')
+            try {
+                const findSubscription = await Subscription.findOneAndUpdate(
+                    { orderId: order_id },
+                    { status: 'failed' },
+                    { new: true }
+                )
+                if (!findSubscription) {
+                    res.status(404).json({ errors: 'Subscription not found' })
+                }
+                return res.status(400).json({ errors: 'Payment failed or dismissed by user' })
+            } catch (err) {
+                res.status(500).json({ errors: 'Something went wrong.' })
+            }
         }
+        const generatedSignature = crypto
+            .createHmac('sha256', process.env.RAZORPAY_SECRET_KEY)
+            .update(order_id + '|' + payment_id)
+            .digest('hex')
 
-        const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY).update(order_id + '|' + payment_id).digest('hex')
-        console.log("generatedSignature called", generatedSignature)
         if (generatedSignature === signature) {
-            await Subscription.findOneAndUpdate({ orderId: order_id }, {
-                paymentId: payment_id,
-                status: 'success',
-            })
-            res.json({ status: 'success' })
-            //todo need to manage error more precisely 
-            //todo INCOMPLETE, need to add logic to update coach payment details
+            try {
+                const findSubscription = await Subscription.findOneAndUpdate({ orderId: order_id },
+                    {
+                        paymentId: payment_id,
+                        status: 'success',
+                    }, 
+                    { new: true }
+                )
+
+                if (!findSubscription) {
+                    return res.status(404).json({ errors: 'Subscription not found' })
+                }
+ 
+                //todo INCOMPLETE, need to add logic to update coach payment details
+
+                res.status(201).json({ status: 'Payment successful' })
+            } catch (err) {
+                res.status(500).json({ errors: 'Something went wrong.' })
+            }
         } else {
-            await Subscription.findOneAndUpdate({ orderId: order_id }, { status: 'failed' });
-            res.status(400).send('Invalid signature')
+            try {
+                await Subscription.findOneAndUpdate(
+                    { orderId: order_id },
+                    { status: 'failed' },
+                    { new: true })
+                return res.status(400).json({ errors: 'Invalid signature' })
+            } catch (err) {
+                res.status(500).json({ errors: 'Something went wrong.' })
+            }
         }
     } catch (err) {
-        console.error('Error verifying order:', error)
-        res.status(500).send('Internal Server Error')
+        res.status(500).json({ errors: 'Something went wrong.' })
     }
 }
 
