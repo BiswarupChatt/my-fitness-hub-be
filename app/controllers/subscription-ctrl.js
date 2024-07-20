@@ -44,22 +44,31 @@ subscriptionCtrl.createOrder = async (req, res) => {
 }
 
 subscriptionCtrl.verifyOrder = async (req, res) => {
-    const { order_id, payment_id, signature, subscriptionId, userId } = req.body
-    const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY).update(order_id + '|' + payment_id).digest('hex')
+    const { order_id, payment_id, signature, subscriptionId, userId, status } = req.body
+    try {
 
-    console.log("generatedSignature called", generatedSignature)
+        if (status === 'failed') {
+            await Subscription.findOneAndUpdate({ orderId: order_id }, { status: 'failed' });
+            return res.status(400).send('Payment failed or dismissed by user')
+        }
 
-    if (generatedSignature === signature) {
-        await Subscription.findOneAndUpdate({ orderId: order_id }, {
-            paymentId: payment_id,
-            status: 'success',
-        })
-        res.json({ status: 'success' })
-        //todo need to manage error more precisely 
-        //todo INCOMPLETE, need to add logic to update coach payment details
-    } else {
-        await Subscription.findByIdAndUpdate({ orderId: order_id }, { status: 'failed' });
-        res.status(400).send('Invalid signature')
+        const generatedSignature = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY).update(order_id + '|' + payment_id).digest('hex')
+        console.log("generatedSignature called", generatedSignature)
+        if (generatedSignature === signature) {
+            await Subscription.findOneAndUpdate({ orderId: order_id }, {
+                paymentId: payment_id,
+                status: 'success',
+            })
+            res.json({ status: 'success' })
+            //todo need to manage error more precisely 
+            //todo INCOMPLETE, need to add logic to update coach payment details
+        } else {
+            await Subscription.findOneAndUpdate({ orderId: order_id }, { status: 'failed' });
+            res.status(400).send('Invalid signature')
+        }
+    } catch (err) {
+        console.error('Error verifying order:', error)
+        res.status(500).send('Internal Server Error')
     }
 }
 
