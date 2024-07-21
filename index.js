@@ -121,7 +121,7 @@ app.delete('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']),
 
 
 app.get('/subscription', authenticateUser, authorizeUser(['coach', 'admin']), subscriptionCtrl.get)
-//todo add authenticate user and authorize user
+//todo add authenticate user and authorize user below
 app.post('/subscription/create-order', subscriptionCtrl.createOrder)
 app.post('/subscription/verify-signature', subscriptionCtrl.verifyOrder)
 

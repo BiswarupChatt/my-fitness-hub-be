@@ -1,9 +1,9 @@
-const Subscription = require('../models/subscription-model')
-const Coach = require('../models/coach-model')
-const crypto = require('crypto')
-const Razorpay = require('razorpay')
-const moment = require('moment')
 const subscriptionCtrl = {}
+const crypto = require('crypto')
+const moment = require('moment')
+const Razorpay = require('razorpay')
+const Coach = require('../models/coach-model')
+const Subscription = require('../models/subscription-model')
 
 const razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -15,7 +15,7 @@ subscriptionCtrl.createOrder = async (req, res) => {
     const options = {
         amount: amount * 100,
         currency: "INR",
-        receipt: `receipt_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        receipt: `receipt-${moment().format('YYYYMMDD-HHmmss')}-${crypto.randomBytes(3).toString('hex')}`,
         notes: {
             //todo need modification in coachId
             // coachId: req.user.id,
@@ -46,7 +46,7 @@ subscriptionCtrl.createOrder = async (req, res) => {
 }
 
 subscriptionCtrl.verifyOrder = async (req, res) => {
-    const { order_id, payment_id, signature, subscriptionId, coachId, status, plan } = req.body
+    const { order_id, payment_id, signature, coachId, status, plan } = req.body
     try {
 
         if (status === 'failed') {
