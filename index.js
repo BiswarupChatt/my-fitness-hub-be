@@ -38,6 +38,7 @@ const configureDB = require('./config/db')
 
 const app = express()
 const port = process.env.PORT || 4000
+const localNetwork = process.env.NETWORK
 
 configureDB()
 
@@ -122,7 +123,7 @@ app.delete('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']),
 
 app.get('/subscription', authenticateUser, authorizeUser(['coach', 'admin']), subscriptionCtrl.get)
 //todo add authenticate user and authorize user below
-app.post('/subscription/create-order', authenticateUser, authorizeUser(['coach', 'admin']), subscriptionCtrl.createOrder)
+app.post('/subscription/create-order', subscriptionCtrl.createOrder)
 app.post('/subscription/verify-signature', subscriptionCtrl.verifyOrder)
 
 
@@ -130,6 +131,6 @@ app.get('/hello-world', (req, res) => {
     res.send('hello world')
 })
 
-app.listen(port, () => {
-    console.log(`Server is running successfully on this url http://localhost:${port}`)
+app.listen(port,localNetwork, () => {
+    console.log(`Server is running successfully on this url http://${localNetwork}:${port}`)
 })
