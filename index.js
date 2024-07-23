@@ -127,10 +127,10 @@ app.post('/subscription/create-order', subscriptionCtrl.createOrder)
 app.post('/subscription/verify-signature', subscriptionCtrl.verifyOrder)
 
 
-app.get('/hello-world', (req, res) => {
-    res.send('hello world')
+app.get('/admin', (req, res) => {
+    res.send('hello admin')
 })
 
-app.listen(port,localNetwork, () => {
+app.listen(port, localNetwork, () => {
     console.log(`Server is running successfully on this url http://${localNetwork}:${port}`)
 })

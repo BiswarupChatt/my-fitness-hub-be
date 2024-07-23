@@ -10,6 +10,93 @@ const razorpayInstance = new Razorpay({
     key_secret: process.env.RAZORPAY_SECRET_KEY
 })
 
+const paymentFailure = async (order_id) => {
+    try {
+        const findSubscription = await Subscription.findOneAndUpdate(
+            { orderId: order_id },
+            { status: 'failed' },
+            { new: true }
+        )
+        if (!findSubscription) {
+            return { status: 404, errors: 'Subscription not found.' }
+        }
+        return { status: 400, errors: 'Payment failed or dismissed by user.' }
+    } catch (err) {
+        return { status: 500, errors: 'Something went wrong.' }
+    }
+}
+
+const generateSignature = (order_id, payment_id) => {
+    return crypto
+        .createHmac('sha256', process.env.RAZORPAY_SECRET_KEY)
+        .update(order_id + '|' + payment_id)
+        .digest('hex')
+}
+
+const updateSubscriptionSuccess = async (order_id, payment_id) => {
+    try {
+        const findSubscription = await Subscription.findOneAndUpdate(
+            { orderId: order_id },
+            {
+                paymentId: payment_id,
+                status: 'success'
+            },
+            { new: true }
+        )
+        if (!findSubscription) {
+            return { status: 404, errors: 'Subscription not found.' }
+        }
+        return { status: 200, data: findSubscription }
+    } catch (err) {
+        return { status: 500, errors: 'Something went wrong.' }
+    }
+}
+
+const updateCoachPaymentDetails = async (coachId, plan) => {
+    try {
+        const coach = await Coach.findOne({ user: coachId })
+        if (!coach) {
+            return { status: 404, errors: 'Coach not found.' }
+        }
+
+        let endDate
+        let startDate
+        const currentDate = moment()
+
+        if (coach.payment.isActive === true) {
+            startDate = moment(coach.payment.startDate)
+            if (plan === 'monthly') {
+                endDate = moment(coach.payment.endDate).add(1, 'month')
+            } else if (plan === 'yearly') {
+                endDate = moment(coach.payment.endDate).add(1, 'year')
+            }
+        } else {
+            startDate = currentDate
+            if (plan === 'monthly') {
+                endDate = currentDate.clone().add(1, 'month')
+            } else if (plan === 'yearly') {
+                endDate = currentDate.clone().add(1, 'year')
+            }
+        }
+
+        const coachModelUpdate = await Coach.findOneAndUpdate(
+            { user: coachId },
+            {
+                'payment.isActive': true,
+                'payment.startDate': startDate.toDate(),
+                'payment.endDate': endDate.toDate(),
+            },
+            { new: true }
+        )
+        if (!coachModelUpdate) {
+            return { status: 404, errors: "Coach not found." }
+        }
+        return { status: 201, data: coachModelUpdate }
+    } catch (err) {
+        return { status: 500, errors: 'Something went wrong.' }
+    }
+}
+
 subscriptionCtrl.createOrder = async (req, res) => {
     const { amount, plan } = req.body
     const options = {
@@ -48,93 +135,32 @@ subscriptionCtrl.createOrder = async (req, res) => {
 subscriptionCtrl.verifyOrder = async (req, res) => {
     const { order_id, payment_id, signature, coachId, status, plan } = req.body
     try {
-
         if (status === 'failed') {
-            try {
-                const findSubscription = await Subscription.findOneAndUpdate(
-                    { orderId: order_id },
-                    { status: 'failed' },
-                    { new: true }
-                )
-                if (!findSubscription) {
-                    res.status(404).json({ errors: 'Subscription not found' })
-                }
-                return res.status(400).json({ errors: 'Payment failed or dismissed by user' })
-            } catch (err) {
-                res.status(500).json({ errors: 'Something went wrong.' })
-            }
+            const paymentResult = await paymentFailure(order_id)
+            console.log("1")
+            return res.status(paymentResult.status).json({ errors: paymentResult.errors })
         }
 
-        const generatedSignature = crypto
-            .createHmac('sha256', process.env.RAZORPAY_SECRET_KEY)
-            .update(order_id + '|' + payment_id)
-            .digest('hex')
-
-        if (generatedSignature === signature) {
-            try {
-
-                const findSubscription = await Subscription.findOneAndUpdate({ orderId: order_id },
-                    {
-                        paymentId: payment_id,
-                        status: 'success',
-                    },
-                    { new: true }
-                )
-
-                if (!findSubscription) {
-                    return res.status(404).json({ errors: 'Subscription not found' })
-                }
-
-                //todo INCOMPLETE, need to add logic to update coach payment details
-                const coach = await Coach.findOne({ user: coachId })
-                let endDate
-                let startDate
-                const currentDate = moment()
-                console.log(coach)
-                if (coach.payment.isActive === true) {
-                    startDate = moment(coach.payment.startDate)
-                    if (plan === 'monthly') {
-                        endDate = moment(coach.payment.endDate).add(1, 'month')
-                    } else if (plan === 'yearly') {
-                        endDate = moment(coach.payment.endDate).add(1, 'year')
-                    }
-                } else {
-                    startDate = currentDate
-                    if (plan === 'monthly') {
-                        endDate = currentDate.clone().add(1, 'month')
-                    } else if (plan === 'yearly') {
-                        endDate = currentDate.clone().add(1, 'year')
-                    }
-                }
-
-                const coachModelUpdate = await Coach.findOneAndUpdate({ user: coachId }, {
-                    'payment.isActive': true,
-                    'payment.startDate': startDate.toDate(),
-                    'payment.endDate': endDate.toDate()
-                }, { new: true })
-
-                if (!coachModelUpdate) {
-                    res.status(404).json({ errors: 'Coach not found.' })
-                }
-
-                res.status(201).json({ status: 'Payment successful' })
-            } catch (err) {
-                console.log(err)
-                res.status(500).json({ errors: 'Something went wrong.' })
+        const compareSignature = generateSignature(order_id, payment_id)
+        if (compareSignature === signature) {
+            const subscriptionResult = await updateSubscriptionSuccess(order_id, payment_id)
+            console.log("2")
+            if (subscriptionResult.status !== 200) {
+                return res.status(subscriptionResult.status).json({ errors: subscriptionResult.errors })
             }
 
-        } else {
-            try {
-                await Subscription.findOneAndUpdate(
-                    { orderId: order_id },
-                    { status: 'failed' },
-                    { new: true })
-                return res.status(400).json({ errors: 'Invalid signature' })
-            } catch (err) {
-                res.status(500).json({ errors: 'Something went wrong.' })
-            }
+            const coachResult = await updateCoachPaymentDetails(coachId, plan)
+            console.log("3")
+            return res.status(coachResult.status).json(
+                coachResult.status === 201 ? { status: "Payment Successful" } : { errors: coachResult.errors }
+            )
+        }else{
+            const paymentResult = await handlePaymentFailure(order_id)
+            console.log("4")
+            return res.status(400).json({ errors: paymentResult.errors })
         }
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong.' })
     }
 }
@@ -147,5 +173,7 @@ subscriptionCtrl.get = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong.' })
     }
 }
+
+
 
 module.exports = subscriptionCtrl
