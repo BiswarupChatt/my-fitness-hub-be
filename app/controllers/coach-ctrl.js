@@ -9,7 +9,7 @@ const { sendInvitationEmail } = require('../utility/nodeMailer')
 
 coachCtrl.getMy = async (req, res) => {
     try {
-        const coach = await Coach.find({ user: req.user.id }).populate("user")
+        const coach = await Coach.findOne({ user: req.user.id }).populate("user")
         return res.status(200).json(coach)
     } catch (err) {
         res.status(500).json({ errors: "Something went wrong" })

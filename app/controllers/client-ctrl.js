@@ -22,7 +22,7 @@ clientCtrl.update = async (req, res) => {
 
 clientCtrl.getMy = async (req, res) => {
     try {
-        const client = await Client.find({ user: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
+        const client = await Client.findOne({ user: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
         return res.status(200).json(client)
     } catch (err) {
         console.log(err)

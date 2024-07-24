@@ -57,8 +57,8 @@ app.post('/users/resetPassword/:token', checkSchema(resetPasswordValidations), u
 app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileImage'), userCtrl.profileImageUpdate)
 
 
-app.get('/coach', authenticateUser, authorizeUser(['coach']), coachCtrl.getMy)
-app.put('/coach', authenticateUser, authorizeUser(['coach']), checkSchema(coachUpdateValidation), coachCtrl.update)
+app.get('/coach', authenticateUser, authorizeUser(['coach', "admin"]), coachCtrl.getMy)
+app.put('/coach', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(coachUpdateValidation), coachCtrl.update)
 app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach']), coachCtrl.getAllCLient)
 app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
 app.post('/coach/sendInvitationEmail', authenticateUser, authorizeUser(['coach']), checkSchema(invitationEmailValidation), coachCtrl.sendInvitationEmail)
@@ -127,8 +127,8 @@ app.post('/subscription/create-order', subscriptionCtrl.createOrder)
 app.post('/subscription/verify-signature', subscriptionCtrl.verifyOrder)
 
 
-app.get('/admin', (req, res) => {
-    res.send('hello admin')
+app.get('/', (req, res) => {
+    res.send('hello admin i am your backend, how is your coding going?')
 })
 
 app.listen(port, localNetwork, () => {
