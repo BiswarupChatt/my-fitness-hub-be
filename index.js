@@ -59,9 +59,9 @@ app.put('/users/profileImageUpdate', authenticateUser, upload.single('profileIma
 
 app.get('/coach', authenticateUser, authorizeUser(['coach', "admin"]), coachCtrl.getMy)
 app.put('/coach', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(coachUpdateValidation), coachCtrl.update)
-app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach']), coachCtrl.getAllCLient)
-app.put('/coach/verification', authenticateUser, authorizeUser(['admin']), coachCtrl.verification)
-app.post('/coach/sendInvitationEmail', authenticateUser, authorizeUser(['coach']), checkSchema(invitationEmailValidation), coachCtrl.sendInvitationEmail)
+app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach', "admin"]), coachCtrl.getAllCLient)
+app.put('/coach/verification', authenticateUser, authorizeUser(['coach', "admin"]), coachCtrl.verification)
+app.post('/coach/sendInvitationEmail', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(invitationEmailValidation), coachCtrl.sendInvitationEmail)
 app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coach']), coachCtrl.getSingleCLient)
 
 
