@@ -32,10 +32,32 @@ coachCtrl.update = async (req, res) => {
 
 coachCtrl.getAllCLient = async (req, res) => {
     try {
-        const client = await Client.find({ coach: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
+        const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'asc', search = '' } = req.query
+
+        const searchQuery = {
+            coach: req.user.id,
+            $or: [
+                // { user: { $regex: search, $options: 'i' } },
+                { gender: { $regex: search, $options: 'i' } },
+                { 'user.lastName': { $regex: search, $options: 'i' } },
+                { 'user.email': { $regex: search, $options: 'i' } },
+            ]
+        }
+
+        const sortOption = { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
+
+        const client = await Client
+            .find(searchQuery)
+            .populate("coach user")
+            .sort(sortOption)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+
+        // const client = await Client.find({ coach: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
         return res.status(201).json(client)
     } catch (err) {
-        res.status(500).json({ errors: "Something went wrong." })
+        console.log(err)
+        res.status(500).json({ errors: "Something went wrong.", err })
     }
 }
 

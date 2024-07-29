@@ -15,14 +15,20 @@ const clientSchema = new Schema({
     phoneNumber: Number,
     dateOfBirth: Date,
     gender: String,
+    firstName: String,
+    lastName: String,
+    email: String,
     weight: Number,
     height: Number,
-    programName: {
-        type: Schema.Types.ObjectId,
-        ref: "Program",
-    }, 
-    startDate : Date, 
-    endDate: Date
+    program: {
+        programName: {
+            type: Schema.Types.ObjectId,
+            ref: "Program",
+        },
+        startDate: Date,
+        endDate: Date,
+        isActive: Boolean
+    },
 }, { timestamps: true })
 
 const Client = model('Client', clientSchema)

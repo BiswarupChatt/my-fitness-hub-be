@@ -21,19 +21,19 @@ userCtrl.getAccount = async (req, res) => {
     }
 }
 
-userCtrl.updateAccount = async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-    }
-    try {
-        const body = _.pick(req.body, ['firstName', 'lastName', 'email'])
-        const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
-        return res.status(201).json(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt']))
-    } catch (err) {
-        res.status(500).json({ errors: "Something went wrong" })
-    }
-}
+// userCtrl.updateAccount = async (req, res) => {
+//     const errors = validationResult(req)
+//     if (!errors.isEmpty()) {
+//         return res.status(400).json({ errors: errors.array() })
+//     }
+//     try {
+//         const body = _.pick(req.body, ['firstName', 'lastName', 'email'])
+//         const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
+//         return res.status(201).json(_.pick(user, ['_id', 'firstName', 'lastName', 'email', 'role', 'createdAt', 'updatedAt']))
+//     } catch (err) {
+//         res.status(500).json({ errors: "Something went wrong" })
+//     }
+// }
 
 userCtrl.login = async (req, res) => {
     const errors = validationResult(req)

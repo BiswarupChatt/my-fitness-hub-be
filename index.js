@@ -48,7 +48,7 @@ app.use(cors())
 
 
 app.get('/users/account', authenticateUser, userCtrl.getAccount)
-app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)
+// app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)
 app.post('/users/login', checkSchema(userLoginValidations), userCtrl.login)
 app.get('/users/loadCoachInfo/:token', checkSchema(userRegisterValidations), userCtrl.loadCoachInfo)
 app.post('/users/register/coach', checkSchema(userRegisterValidations), userCtrl.coachRegister)

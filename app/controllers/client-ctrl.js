@@ -1,6 +1,7 @@
 const clientCtrl = {}
 const _ = require("lodash")
 const Client = require('../models/client-model')
+const User = require('../models/user-model')
 const { validationResult } = require('express-validator')
 
 
@@ -11,9 +12,10 @@ clientCtrl.update = async (req, res) => {
         return res.status(400).json({ errors: errors.array() })
     }
     try {
-        const body = _.pick(req.body, ['phoneNumber', 'dateOfBirth', 'gender', 'weight', 'height'])
+        const body = _.pick(req.body, ['phoneNumber', 'dateOfBirth', 'gender', 'weight', 'height', 'firstName', 'lastName', 'email'])
         const client = await Client.findOneAndUpdate({ user: req.user.id }, body, { new: true })
-        res.status(201).json(client)
+        const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
+        res.status(201).json({ client, user })
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: "Something went wrong" })

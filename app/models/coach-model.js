@@ -16,6 +16,9 @@ const coachSchema = new Schema({
     phoneNumber: Number,
     dateOfBirth: Date,
     gender: String,
+    firstName: String,
+    lastName: String,
+    email: String,
     weight: Number,
     height: Number,
     payment: {
