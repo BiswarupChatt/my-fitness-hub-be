@@ -76,13 +76,15 @@ userCtrl.coachRegister = async (req, res) => {
         const userRole = "coach"
         const user = new User({ ...body, password: hashPassword, role: userRole })
         await user.save()
-        const newUser = await User.findOne({ email: req.body.email })
-        if (newUser) {
+        if (user) {
             const now = momentTz().tz('Asia/Kolkata')
             const startDate = now.toDate()
             const endDate = now.add(1, 'month').toDate()
             const coachData = {
-                user: newUser._id,
+                user: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
                 payment: {
                     plan: 'monthly',
                     isActive: true,
@@ -92,10 +94,11 @@ userCtrl.coachRegister = async (req, res) => {
             }
             const coach = new Coach(coachData)
             await coach.save()
-            welcomeEmail(newUser.email)
+            welcomeEmail(user.email)
             res.status(201).json({ user: user, coach: coach })
         }
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }

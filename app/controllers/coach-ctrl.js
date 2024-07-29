@@ -22,11 +22,13 @@ coachCtrl.update = async (req, res) => {
         return res.status(400).json({ errors: errors.array() })
     }
     try {
-        const body = _.pick(req.body, ['phoneNumber', 'dateOfBirth', 'gender', 'weight', 'height', 'bankDetails'])
+        const body = _.pick(req.body, ['phoneNumber', 'dateOfBirth', 'gender', 'weight', 'height', 'bankDetails', 'firstName', 'lastName', 'email'])
         const coach = await Coach.findOneAndUpdate({ user: req.user.id }, body, { new: true })
-        res.status(201).json(coach)
+        const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
+        res.status(201).json({coach, user})
     } catch (err) {
-        res.status(500).json({ errors: "Something went wrong" })
+        console.log(err)
+        res.status(500).json({ errors: "Something went wrong.", err })
     }
 }
 
@@ -38,9 +40,10 @@ coachCtrl.getAllCLient = async (req, res) => {
             coach: req.user.id,
             $or: [
                 // { user: { $regex: search, $options: 'i' } },
-                { gender: { $regex: search, $options: 'i' } },
-                { 'user.lastName': { $regex: search, $options: 'i' } },
-                { 'user.email': { $regex: search, $options: 'i' } },
+                // { gender: { $regex: search, $options: 'i' } },
+                { firstName: { $regex: search, $options: 'i' } },
+                { lastName: { $regex: search, $options: 'i' } },
+                // { email: { $regex: search, $options: 'i' } },
             ]
         }
 
@@ -48,7 +51,7 @@ coachCtrl.getAllCLient = async (req, res) => {
 
         const client = await Client
             .find(searchQuery)
-            .populate("coach user")
+            // .populate("coach user")
             .sort(sortOption)
             .skip((page - 1) * limit)
             .limit(parseInt(limit))
