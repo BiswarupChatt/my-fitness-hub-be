@@ -100,6 +100,23 @@ userCtrl.coachRegister = async (req, res) => {
     }
 }
 
+userCtrl.loadCoachInfo = async (req, res) => {
+    try {
+        const decodedToken = jwt.verify(req.params.token, process.env.JWT_SECRET)
+        if (!decodedToken) {
+            return res.status(404).json({ errors: 'Invalid Link' })
+        }
+        const coach = await Coach.findOne({ user: decodedToken.coachId }).populate('user')
+        if (!coach) {
+            return res.status(400).json({ errors: "Coach Does't  Exists" })
+        }
+        res.status(201).json(coach)
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ errors: 'Something went wrong' })
+    }
+}
+
 userCtrl.clientRegister = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -173,15 +190,15 @@ userCtrl.resetPassword = async (req, res) => {
             return res.status(404).json({ errors: 'No user found' })
         }
         const { password, confirmPassword } = req.body
-        if(password !== confirmPassword){
-            return res.status(402).json({errors: 'Password do not match'})
+        if (password !== confirmPassword) {
+            return res.status(402).json({ errors: 'Password do not match' })
         }
         const salt = await bcryptjs.genSalt()
         const hashPassword = await bcryptjs.hash(password, salt)
         user.password = hashPassword
         await user.save()
 
-        res.status(200).json({message: 'Password restored Successfully'})
+        res.status(200).json({ message: 'Password restored Successfully' })
     } catch (err) {
         console.log(err)
         if (err.name === 'TokenExpiredError') {

@@ -35,7 +35,7 @@ coachCtrl.getAllCLient = async (req, res) => {
         const client = await Client.find({ coach: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
         return res.status(201).json(client)
     } catch (err) {
-        res.status(500).json({ errors: "Something went wrong" })
+        res.status(500).json({ errors: "Something went wrong." })
     }
 }
 
@@ -60,11 +60,11 @@ coachCtrl.sendInvitationEmail = async (req, res) => {
         const token = jwt.sign({ coachId: req.user.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_SEND_INVITATION_EXPIRE })
 
         sendInvitationEmail(email, token, coachDetails.firstName, coachDetails.lastName)
-        
+
         return res.status(200).json({ message: "Email Sent Successfully", token: token })
     } catch (err) {
         console.log(err)
-        res.status(500).json({ errors: "Something went wrong" })
+        res.status(500).json({ errors: "Something went wrong." })
     }
 }
 
