@@ -18,7 +18,7 @@ const progressCtrl = require('./app/controllers/progress-ctrl')
 const programCtrl = require('./app/controllers/program-ctrl')
 const subscriptionCtrl = require('./app/controllers/subscription-ctrl')
 
-const { userRegisterValidations, userUpdateValidation, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
+const { userRegisterValidations, userLoginValidations, userForgetPasswordValidation, resetPasswordValidations } = require('./app/validations/user-validations')
 const { coachUpdateValidation, invitationEmailValidation } = require('./app/validations/coach-validations')
 const { clientUpdateValidations } = require('./app/validations/client-validations')
 const { questionValidation } = require('./app/validations/question-validations')
