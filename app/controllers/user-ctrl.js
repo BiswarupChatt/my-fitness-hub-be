@@ -142,7 +142,10 @@ userCtrl.clientRegister = async (req, res) => {
         await user.save()
         const clientData = {
             user: user._id,
-            coach: coach.user
+            coach: coach.user,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
         }
         const client = new Client(clientData)
         await client.save()

@@ -1,3 +1,5 @@
+const User = require('../models/user-model')
+
 const coachUpdateValidation = {
 
     phoneNumber: {
@@ -53,6 +55,51 @@ const coachUpdateValidation = {
             options: { min: 0 },
             errorMessage: 'height must be a number'
         }
+    },
+    firstName: {
+        in: ['body'],
+        exists: {
+            errorMessage: "First name is required"
+        },
+        notEmpty: {
+            errorMessage: "First name cannot be empty"
+        },
+        trim: true
+    },
+    lastName: {
+        in: ['body'],
+        exists: {
+            errorMessage: "Last name is required"
+        },
+        notEmpty: {
+            errorMessage: "Last name cannot be empty"
+        },
+        trim: true
+    },
+    email: {
+        in: ['body'],
+        exists: {
+            errorMessage: "Email is required"
+        },
+        notEmpty: {
+            errorMessage: "Email cannot be empty"
+        },
+        isEmail: {
+            errorMessage: "Email Should be In valid format"
+        },
+        custom: {
+            options: async (value, { req }) => {
+                const userId = req.user.id
+                const user = await User.findOne({ email: value })
+                if (user && user.id !== userId) {
+                    throw new Error('Email already taken')
+                } else {
+                    return true;
+                }
+            }
+        },
+        trim: true,
+        normalizeEmail: true
     }
 
 }

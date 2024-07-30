@@ -43,7 +43,7 @@ coachCtrl.getAllCLient = async (req, res) => {
                 // { gender: { $regex: search, $options: 'i' } },
                 { firstName: { $regex: search, $options: 'i' } },
                 { lastName: { $regex: search, $options: 'i' } },
-                // { email: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } },
             ]
         }
 
