@@ -25,7 +25,7 @@ coachCtrl.update = async (req, res) => {
         const body = _.pick(req.body, ['phoneNumber', 'dateOfBirth', 'gender', 'weight', 'height', 'bankDetails', 'firstName', 'lastName', 'email'])
         const coach = await Coach.findOneAndUpdate({ user: req.user.id }, body, { new: true })
         const user = await User.findByIdAndUpdate(req.user.id, body, { new: true })
-        res.status(201).json({coach, user})
+        res.status(201).json({ coach, user })
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: "Something went wrong.", err })
@@ -39,8 +39,6 @@ coachCtrl.getAllCLient = async (req, res) => {
         const searchQuery = {
             coach: req.user.id,
             $or: [
-                // { user: { $regex: search, $options: 'i' } },
-                // { gender: { $regex: search, $options: 'i' } },
                 { firstName: { $regex: search, $options: 'i' } },
                 { lastName: { $regex: search, $options: 'i' } },
                 { email: { $regex: search, $options: 'i' } },
@@ -51,13 +49,19 @@ coachCtrl.getAllCLient = async (req, res) => {
 
         const client = await Client
             .find(searchQuery)
-            // .populate("coach user")
+            .populate("coach")
             .sort(sortOption)
             .skip((page - 1) * limit)
             .limit(parseInt(limit))
 
-        // const client = await Client.find({ coach: req.user.id }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
-        return res.status(201).json(client)
+        const totalClients = await Client.countDocuments(searchQuery)
+
+        return res.status(201).json({
+            client: client,
+            totalClients: totalClients,
+            totalPages: Math.ceil(totalClients / limit),
+            currentPages: parseInt(page)
+        })
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: "Something went wrong.", err })
