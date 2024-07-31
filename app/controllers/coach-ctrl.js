@@ -49,7 +49,7 @@ coachCtrl.getAllCLient = async (req, res) => {
 
         const client = await Client
             .find(searchQuery)
-            .populate("coach")
+            .populate("coach user")
             .sort(sortOption)
             .skip((page - 1) * limit)
             .limit(parseInt(limit))
@@ -63,7 +63,6 @@ coachCtrl.getAllCLient = async (req, res) => {
             currentPages: parseInt(page)
         })
     } catch (err) {
-        console.log(err)
         res.status(500).json({ errors: "Something went wrong.", err })
     }
 }
@@ -99,14 +98,19 @@ coachCtrl.sendInvitationEmail = async (req, res) => {
 
 coachCtrl.getSingleCLient = async (req, res) => {
     try {
-        const client = await Client.findOne({ user: req.params.userId }).populate("coach", "_id firstName lastName email role").populate("user", "_id firstName lastName email role")
-        if (req.user.id === client.coach._id) {
+        const client = await Client.findOne({ user: req.params.userId }).populate("coach")
+        console.log(client)
+        if (!client) {
+            return res.status(404).json({ errors: "Client not found" });
+        }
+        if (req.user.id.toString() === client.coach._id.toString()) {
             return res.status(201).json(client)
         } else {
             res.status(404).json({ errors: "You're not authorized to see the details" })
         }
     } catch (err) {
-        res.status(500).json({ errors: "Something went wrong" })
+        console.log(err)
+        res.status(500).json({ errors: "Something went wrong." })
     }
 }
 

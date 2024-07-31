@@ -63,7 +63,7 @@ app.put('/coach', authenticateUser, authorizeUser(['coach', "admin"]), checkSche
 app.get('/coach/getAllClient', authenticateUser, authorizeUser(['coach', "admin"]), coachCtrl.getAllCLient)
 app.put('/coach/verification', authenticateUser, authorizeUser(['coach', "admin"]), coachCtrl.verification)
 app.post('/coach/sendInvitationEmail', authenticateUser, authorizeUser(['coach', "admin"]), checkSchema(invitationEmailValidation), coachCtrl.sendInvitationEmail)
-app.get('/coach/getSingleCLient/:userId', authenticateUser, authorizeUser(['coach']), coachCtrl.getSingleCLient)
+app.get('/coach/getSingleClient/:userId', authenticateUser, authorizeUser(['coach', 'admin']), coachCtrl.getSingleCLient)
 
 
 app.put('/client', authenticateUser, authorizeUser(['client']), checkSchema(clientUpdateValidations), clientCtrl.update)
