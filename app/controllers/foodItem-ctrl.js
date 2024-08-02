@@ -39,10 +39,35 @@ foodItemCtrl.create = async (req, res) => {
 
 foodItemCtrl.get = async (req, res) => {
     try {
-        const defaultFoodItem = await FoodItem.find({ isDefault: true }).populate("coach")
-        const coachFoodItem = await FoodItem.find({ coach: req.user.id }).populate("coach")
-        const all = defaultFoodItem.concat(coachFoodItem)
-        res.status(200).json(all)
+        const { search = '', page = 1, limit = 10, sortBy = 'foodName', sortOrder = 'asc' } = req.query
+
+        const searchQuery = {
+            $or: [
+                { foodName: { $regex: search, options: 'i' } },
+                { unit: { $regex: search, options: 'i' }, }
+            ]
+        }
+
+        const sortOption = { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
+
+        const defaultFoodItems = await FoodItem
+            .find({ ...searchQuery, isDefault: true })
+            .populate('coach')
+            .sort(sortOption)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+
+        const coachFoodItem = await FoodItem
+            .find({ ...searchQuery, coach: req.user.if })
+            .populate('coach')
+            .sort(sortOption)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+
+        // const defaultFoodItem = await FoodItem.find({ isDefault: true }).populate("coach")
+        // const coachFoodItem = await FoodItem.find({ coach: req.user.id }).populate("coach")
+        // const all = defaultFoodItem.concat(coachFoodItem)
+        // res.status(200).json(all)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
     }
@@ -64,7 +89,7 @@ foodItemCtrl.update = async (req, res) => {
             carbohydrates: req.body.carbohydrates
         }
         const foodItem = await FoodItem.findById(req.params._id)
-        if(!foodItem){
+        if (!foodItem) {
             return res.status(404).json({ errors: "Food item not found" })
         }
         if (req.user.id.toString() !== foodItem.coach._id.toString()) {
