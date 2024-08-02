@@ -98,7 +98,7 @@ coachCtrl.sendInvitationEmail = async (req, res) => {
 
 coachCtrl.getSingleCLient = async (req, res) => {
     try {
-        const client = await Client.findOne({ user: req.params.userId }).populate("coach")
+        const client = await Client.findOne({ user: req.params.userId }).populate("coach user")
         console.log(client)
         if (!client) {
             return res.status(404).json({ errors: "Client not found" });

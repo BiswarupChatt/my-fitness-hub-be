@@ -26,12 +26,13 @@ foodItemCtrl.create = async (req, res) => {
             calories: req.body.calories,
             protein: req.body.protein,
             fat: req.body.fat,
-            carbohydrates: req.body.carbohydrates
+            carbohydrate: req.body.carbohydrate
         }
         const foodItem = new FoodItem(body)
         await foodItem.save()
         res.status(201).json(foodItem)
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }

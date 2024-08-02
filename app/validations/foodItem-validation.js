@@ -46,7 +46,7 @@ const foodItemValidation = {
         in: ['body'],
         isFloat: {
             options: { min: 0 },
-            errorMessage: 'Calories must be a positive integer'
+            errorMessage: 'Calories must be a positive number'
         },
         exists: {
             errorMessage: "Calories is required"
@@ -60,7 +60,7 @@ const foodItemValidation = {
         in: ['body'],
         isFloat: {
             options: { min: 0 },
-            errorMessage: 'Protein must be a positive integer'
+            errorMessage: 'Protein must be a positive number'
         },
         exists: {
             errorMessage: "Protein is required"
@@ -74,7 +74,7 @@ const foodItemValidation = {
         in: ['body'],
         isFloat: {
             options: { min: 0 },
-            errorMessage: 'Fat must be a positive integer'
+            errorMessage: 'Fat must be a positive number'
         },
         exists: {
             errorMessage: "Fat is required"
@@ -84,17 +84,17 @@ const foodItemValidation = {
         },
         trim: true
     },
-    carbohydrates: {
+    carbohydrate: {
         in: ['body'],
         isFloat: {
             options: { min: 0 },
-            errorMessage: 'Carbohydrates must be a positive integer'
+            errorMessage: 'Carbohydrate must be a positive number'
         },
         exists: {
-            errorMessage: "Carbohydrates is required"
+            errorMessage: "Carbohydrate is required"
         },
         notEmpty: {
-            errorMessage: "Carbohydrates cannot be empty"
+            errorMessage: "Carbohydrate cannot be empty"
         },
         trim: true
     }

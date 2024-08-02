@@ -34,7 +34,7 @@ const foodItemSchema = new Schema({
         type: Number,
         required: true
     },
-    carbohydrates: {
+    carbohydrate: {
         type: Number,
         required: true
     }

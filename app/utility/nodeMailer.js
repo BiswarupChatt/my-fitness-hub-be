@@ -86,7 +86,7 @@ const forgetPasswordMail = (email, token) => {
 
 const sendInvitationEmail = (email, token, coachFirstName, coachLastName) => {
     const mailBody = {
-        from: process.env.NODEMAILER_EMAIL,
+        from: `${coachFirstName} ${coachLastName}`,
         to: email,
         subject: `Join with ${coachFirstName} ${coachLastName} at My Fitness Hub!`,
         html: `
