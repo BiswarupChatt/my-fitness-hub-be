@@ -40,19 +40,19 @@ foodItemCtrl.create = async (req, res) => {
 
 foodItemCtrl.get = async (req, res) => {
     try {
-        const { search = '', page = 1, limit = 10, sortBy = 'foodName', sortOrder = 'asc', userFoodItem = 'false' } = req.query;
+        const { search = '', page = 1, limit = 10, sortBy = 'foodName', sortOrder = 'asc', userFoodItem = 'false' } = req.query
 
         const searchQuery = {
             $or: [
                 { foodName: { $regex: search, $options: 'i' } },
                 { unit: { $regex: search, $options: 'i' } }
             ]
-        };
+        }
 
-        const sortOption = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
+        const sortOption = { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
 
-        let foodItems;
-        let totalFoodItems;
+        let foodItems
+        let totalFoodItems
 
         if (userFoodItem === 'true') {
             foodItems = await FoodItem
@@ -60,26 +60,26 @@ foodItemCtrl.get = async (req, res) => {
                 .populate('coach')
                 .sort(sortOption)
                 .skip((page - 1) * limit)
-                .limit(parseInt(limit));
+                .limit(parseInt(limit))
 
-            totalFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id });
+            totalFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id })
         } else {
             const defaultFoodItems = await FoodItem
                 .find({ ...searchQuery, isDefault: true })
                 .populate('coach')
-                .sort(sortOption);
+                .sort(sortOption)
 
             const coachFoodItems = await FoodItem
                 .find({ ...searchQuery, coach: req.user.id })
                 .populate('coach')
-                .sort(sortOption);
+                .sort(sortOption)
 
-            const combinedFoodItems = [...defaultFoodItems, ...coachFoodItems];
-            foodItems = combinedFoodItems.slice((page - 1) * limit, page * limit);
+            const combinedFoodItems = [...defaultFoodItems, ...coachFoodItems]
+            foodItems = combinedFoodItems.slice((page - 1) * limit, page * limit)
 
-            const totalDefaultFoodItems = await FoodItem.countDocuments({ ...searchQuery, isDefault: true });
-            const totalCoachFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id });
-            totalFoodItems = totalDefaultFoodItems + totalCoachFoodItems;
+            const totalDefaultFoodItems = await FoodItem.countDocuments({ ...searchQuery, isDefault: true })
+            const totalCoachFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id })
+            totalFoodItems = totalDefaultFoodItems + totalCoachFoodItems
         }
 
         return res.status(200).json({
@@ -87,12 +87,12 @@ foodItemCtrl.get = async (req, res) => {
             totalFoodItems: totalFoodItems,
             totalPages: Math.ceil(totalFoodItems / limit),
             currentPage: parseInt(page)
-        });
+        })
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ errors: 'Something went wrong' });
+        console.error(err)
+        res.status(500).json({ errors: 'Something went wrong' })
     }
-};
+}
 
 
 foodItemCtrl.update = async (req, res) => {
