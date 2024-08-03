@@ -1,4 +1,5 @@
 const foodItemCtrl = {}
+const { defaults } = require('lodash')
 const FoodItem = require('../models/foodItem-model')
 const { validationResult } = require('express-validator')
 
@@ -43,8 +44,8 @@ foodItemCtrl.get = async (req, res) => {
 
         const searchQuery = {
             $or: [
-                { foodName: { $regex: search, options: 'i' } },
-                { unit: { $regex: search, options: 'i' }, }
+                { foodName: { $regex: search, $options: 'i' } },
+                { unit: { $regex: search, $options: 'i' }, }
             ]
         }
 
@@ -58,17 +59,31 @@ foodItemCtrl.get = async (req, res) => {
             .limit(parseInt(limit))
 
         const coachFoodItem = await FoodItem
-            .find({ ...searchQuery, coach: req.user.if })
+            .find({ ...searchQuery, coach: req.user.id })
             .populate('coach')
             .sort(sortOption)
             .skip((page - 1) * limit)
             .limit(parseInt(limit))
+
+        const allFoodItems = [...defaultFoodItems, ...coachFoodItem]
+
+        const totalDefaultFoodItems = await FoodItem.countDocuments({ ...searchQuery, isDefault: true })
+        const totalCoachFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id })
+        const totalFoodItems = totalDefaultFoodItems + totalCoachFoodItems
+
+        return res.status(201).json({
+            foodItems: allFoodItems,
+            totalFoodItems: totalFoodItems,
+            totalPages: Math.ceil(totalFoodItems / limit),
+            currentPage: parseInt(page)
+        })
 
         // const defaultFoodItem = await FoodItem.find({ isDefault: true }).populate("coach")
         // const coachFoodItem = await FoodItem.find({ coach: req.user.id }).populate("coach")
         // const all = defaultFoodItem.concat(coachFoodItem)
         // res.status(200).json(all)
     } catch (err) {
+        console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
