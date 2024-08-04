@@ -1,5 +1,6 @@
 const workoutCtrl = {}
-const Workout = require('../models/workout-model')
+const FoodItem = require('../models/foodItem-model')
+const WorkoutItem = require('../models/workout-model')
 const { validationResult } = require('express-validator')
 
 
@@ -22,7 +23,7 @@ workoutCtrl.create = async (req, res) => {
             exerciseName: req.body.exerciseName,
             videoLink: req.body.videoLink
         }
-        const workout = new Workout(body)
+        const workout = new WorkoutItem(body)
         await workout.save()
         res.status(201).json(workout)
     } catch (err) {
@@ -32,14 +33,68 @@ workoutCtrl.create = async (req, res) => {
 
 workoutCtrl.get = async (req, res) => {
     try {
-        const defaultWorkout = await Workout.find({ isDefault: true }).populate("coach")
-        const coachWorkout = await Workout.find({ coach: req.user.id }).populate("coach")
-        const all = defaultWorkout.concat(coachWorkout)
-        res.status(201).json(all)
+        const { search = '', page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'asc', userWorkoutItem = 'false' } = req.query
+
+        const searchQuery = {
+            $or: [
+                { exerciseName: { $regex: search, $options: 'i' } },
+            ]
+        }
+
+        const sortOption = { [sortBy]: sortOrder === 'asc' ? 1 : -1 }
+        const skip = (page - 1) * limit
+
+        let workoutItems
+        let totalWorkoutItems
+
+        if (userWorkoutItem === 'true') {
+            workoutItems = await WorkoutItem
+                .find({ ...searchQuery, coach: req.user.id })
+                .populate('coach')
+                .sort(sortOption)
+                .skip(skip)
+                .limit(parseInt(limit))
+
+            totalWorkoutItems = await WorkoutItem.countDocuments({ ...searchQuery, coach: req.user.id })
+        } else {
+            const defaultWorkoutItemsPromise = WorkoutItem
+                .find({ ...searchQuery, isDefault: true })
+                .populate('coach')
+                .sort(sortOption)
+
+            const coachWorkoutItemsPromise = WorkoutItem
+                .find({ ...searchQuery, coach: req.user.id })
+                .populate('coach')
+                .sort(sortOption)
+
+            const [defaultWorkoutItems, coachWorkoutItems] = await Promise.all([defaultWorkoutItemsPromise, coachWorkoutItemsPromise])
+
+            const combinedWorkoutItems = [...defaultWorkoutItems, ...coachWorkoutItems]
+            combinedWorkoutItems.sort((x, y) => {
+                if (x[sortBy] < y[sortBy]) {
+                    return sortOrder === 'asc' ? -1 : 1
+                }
+                if (x[sortBy] > y[sortBy]) {
+                    return sortOrder === 'asc' ? 1 : -1
+                }
+                return 0
+            })
+
+            workoutItems = combinedWorkoutItems.slice(skip, skip + parseInt(limit))
+            totalWorkoutItems = combinedWorkoutItems.length
+        }
+
+        return res.status(200).json({
+            workoutItems: workoutItems,
+            totalWorkoutItems: totalWorkoutItems,
+            totalPages: Math.ceil(totalWorkoutItems / limit),
+            currentPage: parseInt(page)
+        })
     } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
+        res.status(500).json({ errors: 'Something went wrong.', err: err.message })
     }
 }
+
 
 workoutCtrl.update = async (req, res) => {
     const errors = validationResult(req)
@@ -51,14 +106,14 @@ workoutCtrl.update = async (req, res) => {
             exerciseName: req.body.exerciseName,
             videoLink: req.body.videoLink
         }
-        const workout = await Workout.findById(req.params._id)
+        const workout = await WorkoutItem.findById(req.params._id)
         if (!workout) {
-            return res.status(404).json({ errors: "Workout not found" })
+            return res.status(404).json({ errors: "WorkoutItem not found" })
         }
         if (req.user.id.toString() !== workout.coach._id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to update" })
         }
-        const updatedWorkout = await Workout.findByIdAndUpdate(req.params._id, body, { new: true })
+        const updatedWorkout = await WorkoutItem.findByIdAndUpdate(req.params._id, body, { new: true })
         res.status(201).json(updatedWorkout)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
@@ -67,14 +122,14 @@ workoutCtrl.update = async (req, res) => {
 
 workoutCtrl.delete = async (req, res) => {
     try {
-        const workout = await Workout.findById(req.params._id)
+        const workout = await WorkoutItem.findById(req.params._id)
         if (!workout) {
-            return res.status(404).json({ errors: "Workout not found" })
+            return res.status(404).json({ errors: "WorkoutItem not found" })
         }
         if (req.user.id.toString() !== workout.coach._id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to delete" })
         }
-        const deletedWorkout = await Workout.findByIdAndDelete(req.params._id)
+        const deletedWorkout = await WorkoutItem.findByIdAndDelete(req.params._id)
         res.status(201).json(deletedWorkout)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })

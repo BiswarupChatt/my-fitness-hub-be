@@ -75,6 +75,16 @@ foodItemCtrl.get = async (req, res) => {
                 .sort(sortOption)
 
             const combinedFoodItems = [...defaultFoodItems, ...coachFoodItems]
+            combinedFoodItems.sort((x, y) => {
+                if (x[sortBy] < y[sortBy]) {
+                    return sortOrder === 'asc' ? -1 : 1
+                }
+                if (x[sortBy] > y[sortBy]) {
+                    return sortOrder === 'asc' ? 1 : -1
+                }
+                return 0
+            })
+
             foodItems = combinedFoodItems.slice((page - 1) * limit, page * limit)
 
             const totalDefaultFoodItems = await FoodItem.countDocuments({ ...searchQuery, isDefault: true })
@@ -90,9 +100,10 @@ foodItemCtrl.get = async (req, res) => {
         })
     } catch (err) {
         console.error(err)
-        res.status(500).json({ errors: 'Something went wrong' })
+        res.status(500).json({ errors: 'Something went wrong.', err: err })
     }
 }
+
 
 
 foodItemCtrl.update = async (req, res) => {
