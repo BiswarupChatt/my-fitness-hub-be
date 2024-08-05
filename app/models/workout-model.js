@@ -15,6 +15,6 @@ const workoutSchema = new Schema({
     videoLink: String
 }, { timestamps: true })
 
-const WorkoutItem = model('Workout', workoutSchema)
+const WorkoutItem = model('WorkoutItems', workoutSchema)
 
 module.exports = WorkoutItem
