@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
 const { Schema, model } = mongoose
 
-const mealSchema = new Schema({
-    foodName: {
+const foodSchema = new Schema({
+    foodId: {
         type: Schema.Types.ObjectId,
         ref: "FoodItem",
         required: true
@@ -27,7 +27,7 @@ const mealSchema = new Schema({
         type: Number,
         required: true
     },
-    fats: {
+    fat: {
         type: Number,
         required: true
     },
@@ -47,7 +47,7 @@ const mealPlanSchema = new Schema({
         type: String,
         required: true
     },
-    meals: [mealSchema]
+    foods: [foodSchema]
 }, { timestamps: true, _id: false })
 
 const nutritionPlanSchema = new Schema({

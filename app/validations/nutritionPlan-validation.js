@@ -9,7 +9,7 @@ const nutritionPlanValidation = {
     'mealPlans': {
         in: ['body'],
         isArray: {
-            errorMessage: 'Meal Plans must be an array'
+            errorMessage: 'Meal plans must be an array'
         }
     },
     'mealPlans.*.title': {
@@ -21,36 +21,35 @@ const nutritionPlanValidation = {
             errorMessage: 'Meal plan title is required'
         }
     },
-    'mealPlans.*.meals': {
+    'mealPlans.*.foods': {
         in: ['body'],
         isArray: {
-            errorMessage: 'Meals must be an array'
+            errorMessage: 'Foods must be an array'
         }
     },
-    'mealPlans.*.meals.*.foodName': {
+    'mealPlans.*.foods.*.foodId': {
         in: ['body'],
         isMongoId: {
             errorMessage: 'Invalid food item ID'
         },
         notEmpty: {
-            errorMessage: 'Food name ID is required'
+            errorMessage: 'Food ID is required'
         }
     },
-    'mealPlans.*.meals.*.unit': {
-        in: ['body'],
-        isIn:{
-            options: [['grams', 'milliliter', 'pounds', 'ounces', 'piece']],
-            errorMessage: 'Unit should be between grams, milliliter, pounds, ounces or piece '
-        },
-        isString: {
-            errorMessage: 'Unit must be a string'
-        },
-        notEmpty: {
-            errorMessage: 'Unit is required'
-        },
-
-    },
-    'mealPlans.*.meals.*.quantity': {
+    // 'mealPlans.*.foods.*.unit': {
+    //     in: ['body'],
+    //     isIn: {
+    //         options: [['grams', 'milliliter', 'pounds', 'ounces', 'piece']],
+    //         errorMessage: 'Unit should be grams, milliliter, pounds, ounces, or piece'
+    //     },
+    //     isString: {
+    //         errorMessage: 'Unit must be a string'
+    //     },
+    //     notEmpty: {
+    //         errorMessage: 'Unit is required'
+    //     }
+    // },
+    'mealPlans.*.foods.*.quantity': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Quantity must be a number'
@@ -59,7 +58,7 @@ const nutritionPlanValidation = {
             errorMessage: 'Quantity is required'
         }
     },
-    'mealPlans.*.meals.*.calories': {
+    'mealPlans.*.foods.*.calories': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Calories must be a number'
@@ -68,7 +67,7 @@ const nutritionPlanValidation = {
             errorMessage: 'Calories are required'
         }
     },
-    'mealPlans.*.meals.*.carbohydrate': {
+    'mealPlans.*.foods.*.carbohydrate': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Carbohydrate must be a number'
@@ -77,7 +76,7 @@ const nutritionPlanValidation = {
             errorMessage: 'Carbohydrate is required'
         }
     },
-    'mealPlans.*.meals.*.protein': {
+    'mealPlans.*.foods.*.protein': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Protein must be a number'
@@ -86,16 +85,16 @@ const nutritionPlanValidation = {
             errorMessage: 'Protein is required'
         }
     },
-    'mealPlans.*.meals.*.fats': {
+    'mealPlans.*.foods.*.fat': {
         in: ['body'],
         isNumeric: {
-            errorMessage: 'Fats must be a number'
+            errorMessage: 'Fat must be a number'
         },
         notEmpty: {
-            errorMessage: 'Fats are required'
+            errorMessage: 'Fat is required'
         }
     },
-    'mealPlans.*.meals.*.note': {
+    'mealPlans.*.foods.*.note': {
         in: ['body'],
         optional: true,
         isString: {
@@ -103,6 +102,7 @@ const nutritionPlanValidation = {
         }
     }
 }
+
 
 const mealPlansValidations = {
     title: {
@@ -120,7 +120,7 @@ const mealPlansValidations = {
             errorMessage: 'Meals must be an array'
         }
     },
-    'meals.*.foodName': {
+    'meals.*.foodId': {
         in: ['body'],
         isMongoId: {
             errorMessage: 'Invalid food item ID'
@@ -131,8 +131,8 @@ const mealPlansValidations = {
     },
     'meals.*.unit': {
         in: ['body'],
-        isIn:{
-            options: [['grams', 'milliliter', 'pounds', 'ounces', 'piece']],
+        isIn: {
+            options: [['grams', 'milliliter', 'pounds', 'ounces', 'piece']],
             errorMessage: 'Unit should be between grams, milliliter, pounds, ounces or piece '
         },
         isString: {

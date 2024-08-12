@@ -40,7 +40,8 @@ nutritionPlanCtrl.create = async (req, res) => {
         await nutritionPlan.save()
         res.status(201).json(nutritionPlan)
     } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
+        console.log(err)
+        res.status(500).json({ errors: 'Something went wrong', err })
     }
 }
 
@@ -62,14 +63,15 @@ nutritionPlanCtrl.get = async (req, res) => {
         }
 
         const nutritionPlan = await NutritionPlan.findOne({ client: client }).populate({
-            path: 'mealPlans.meals.foodName', model: 'FoodItem'
+            path: 'mealPlans.meals.foodId', model: 'FoodItem'
         }).populate('client coach')
         if (!nutritionPlan) {
             return res.status(404).json({ errors: 'Nutrition plan not found' })
         }
         res.status(201).json(nutritionPlan)
     } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
+        console.log(err)
+        res.status(500).json({ errors: 'Something went wrong', err })
     }
 }
 
