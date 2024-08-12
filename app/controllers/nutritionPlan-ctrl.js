@@ -15,30 +15,38 @@ nutritionPlanCtrl.create = async (req, res) => {
         const client = req.params.clientId
         const coach = req.user.id
 
-        const exists = await NutritionPlan.findOne({ client: client })
         const findClient = await Client.findOne({ user: client })
-        if (exists) {
-            return res.status(400).json({ errors: "Nutrition plan already exists" })
-        }
         if (!findClient) {
             return res.status(400).json({ errors: "Client not found" })
         }
+
         if (findClient.coach.toString() !== coach.toString()) {
             return res.status(400).json({ errors: "You are not authorized to create" })
         }
+
+        const exists = await NutritionPlan.findOne({ client: client })
+
         mealPlans.forEach((ele) => {
             if (!ele.id) {
                 ele.id = uuidv4()
             }
         })
-        const nutritionPlan = new NutritionPlan({
-            client: client,
-            coach: coach,
-            mealPlans: mealPlans,
-            additionalNotes: additionalNotes
-        })
-        await nutritionPlan.save()
-        res.status(201).json(nutritionPlan)
+
+        if (exists) {
+            exists.mealPlans = mealPlans;
+            exists.additionalNotes = additionalNotes;
+            await exists.save();
+            return res.status(200).json(exists)
+        } else {
+            const nutritionPlan = new NutritionPlan({
+                client: client,
+                coach: coach,
+                mealPlans: mealPlans,
+                additionalNotes: additionalNotes
+            })
+            await nutritionPlan.save()
+            res.status(201).json(nutritionPlan)
+        }
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: 'Something went wrong', err })
