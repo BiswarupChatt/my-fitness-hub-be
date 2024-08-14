@@ -30,7 +30,7 @@ const nutritionPlanValidation = {
     'mealPlans.*.foods.*.foodId': {
         in: ['body'],
         isMongoId: {
-            errorMessage: 'Invalid food item ID'
+            errorMessage: 'Invalid food item ID 2'
         },
         notEmpty: {
             errorMessage: 'Food ID is required'
@@ -114,22 +114,22 @@ const mealPlansValidations = {
             errorMessage: 'Meal plan title is required'
         }
     },
-    meals: {
+    foods: {
         in: ['body'],
         isArray: {
             errorMessage: 'Meals must be an array'
         }
     },
-    'meals.*.foodId': {
+    'foods.*.foodId': {
         in: ['body'],
         isMongoId: {
-            errorMessage: 'Invalid food item ID'
+            errorMessage: 'Invalid food item ID 1'
         },
         notEmpty: {
             errorMessage: 'Food name ID is required'
         }
     },
-    'meals.*.unit': {
+    'foods.*.unit': {
         in: ['body'],
         isIn: {
             options: [['grams', 'milliliter', 'pounds', 'ounces', 'piece']],
@@ -143,7 +143,7 @@ const mealPlansValidations = {
         },
 
     },
-    'meals.*.quantity': {
+    'foods.*.quantity': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Quantity must be a number'
@@ -152,7 +152,7 @@ const mealPlansValidations = {
             errorMessage: 'Quantity is required'
         }
     },
-    'meals.*.calories': {
+    'foods.*.calories': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Calories must be a number'
@@ -161,7 +161,7 @@ const mealPlansValidations = {
             errorMessage: 'Calories are required'
         }
     },
-    'meals.*.carbohydrate': {
+    'foods.*.carbohydrate': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Carbohydrate must be a number'
@@ -170,7 +170,7 @@ const mealPlansValidations = {
             errorMessage: 'Carbohydrate is required'
         }
     },
-    'meals.*.protein': {
+    'foods.*.protein': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Protein must be a number'
@@ -179,7 +179,7 @@ const mealPlansValidations = {
             errorMessage: 'Protein is required'
         }
     },
-    'meals.*.fats': {
+    'foods.*.fats': {
         in: ['body'],
         isNumeric: {
             errorMessage: 'Fats must be a number'
@@ -188,7 +188,7 @@ const mealPlansValidations = {
             errorMessage: 'Fats are required'
         }
     },
-    'meals.*.note': {
+    'foods.*.note': {
         in: ['body'],
         optional: true,
         isString: {

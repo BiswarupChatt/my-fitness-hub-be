@@ -56,14 +56,18 @@ nutritionPlanCtrl.create = async (req, res) => {
 nutritionPlanCtrl.get = async (req, res) => {
     try {
         let client
-        if (req.user.role === 'coach') {
+        if (req.user.role === 'coach' || req.user.role === 'admin') {
             client = req.params.clientId
-        } else {
-            client = req.user.id
-        }
+        } 
+        // else {
+        //     client = req.user.id
+        // }
+
+        console.log(`Fetching client with ID: ${client}`)
 
         const findClient = await Client.findOne({ user: client })
         if (!findClient) {
+            console.log(`Client not found for ID: ${client}`)
             return res.status(404).json({ errors: 'Client not found / Please provide client id to the params' })
         }
         if (req.user.role === 'coach' && findClient.coach._id.toString() !== req.user.id.toString()) {
@@ -71,7 +75,7 @@ nutritionPlanCtrl.get = async (req, res) => {
         }
 
         const nutritionPlan = await NutritionPlan.findOne({ client: client }).populate({
-            path: 'mealPlans.meals.foodId', model: 'FoodItem'
+            path: 'mealPlans.foods.foodId', model: 'FoodItem'
         }).populate('client coach')
         if (!nutritionPlan) {
             return res.status(404).json({ errors: 'Nutrition plan not found' })
