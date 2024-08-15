@@ -16,7 +16,7 @@ const authenticateUser = (req, res, next)=>{
         }
         next()
     }catch(err){
-        res.status(500).json({ errors: 'Something went wrong' })
+        res.status(500).json({ errors: 'Something went wrong in authenticate user' })
     }
 }
 

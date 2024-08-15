@@ -49,7 +49,7 @@ nutritionPlanCtrl.create = async (req, res) => {
         }
     } catch (err) {
         console.log(err)
-        res.status(500).json({ errors: 'Something went wrong', err })
+        res.status(500).json({ errors: 'Something went wrong 1', err })
     }
 }
 
@@ -83,123 +83,123 @@ nutritionPlanCtrl.get = async (req, res) => {
         res.status(201).json(nutritionPlan)
     } catch (err) {
         console.log(err)
-        res.status(500).json({ errors: 'Something went wrong', err })
+        res.status(500).json({ errors: 'Something went wrong 2', err })
     }
 }
 
-nutritionPlanCtrl.updateAdditionalNotes = async (req, res) => {
-    try {
-        const clientId = req.params.clientId
-        const { additionalNotes } = req.body
+// nutritionPlanCtrl.updateAdditionalNotes = async (req, res) => {
+//     try {
+//         const clientId = req.params.clientId
+//         const { additionalNotes } = req.body
 
-        const findClient = await Client.findOne({ user: clientId })
-        if (!findClient) {
-            return res.status(404).json({ errors: 'Client not found' })
-        }
-        if (findClient.coach._id.toString() !== req.user.id.toString()) {
-            return res.status(404).json({ errors: "You are not authorized to update additional notes" })
-        }
-        const nutritionPlan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { additionalNotes: additionalNotes }, { new: true })
-        if (!nutritionPlan) {
-            return res.status(404).json({ errors: 'Nutrition plan not found' })
-        }
-        res.status(200).json(nutritionPlan)
-    } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
+//         const findClient = await Client.findOne({ user: clientId })
+//         if (!findClient) {
+//             return res.status(404).json({ errors: 'Client not found' })
+//         }
+//         if (findClient.coach._id.toString() !== req.user.id.toString()) {
+//             return res.status(404).json({ errors: "You are not authorized to update additional notes" })
+//         }
+//         const nutritionPlan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { additionalNotes: additionalNotes }, { new: true })
+//         if (!nutritionPlan) {
+//             return res.status(404).json({ errors: 'Nutrition plan not found' })
+//         }
+//         res.status(200).json(nutritionPlan)
+//     } catch (err) {
+//         res.status(500).json({ errors: 'Something went wrong' })
+//     }
+// }
 
-nutritionPlanCtrl.addMealPlans = async (req, res) => {
-    try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() })
-        }
-        const { title, meals } = req.body
-        const clientId = req.params.clientId
-        const id = uuidv4()
-        const addToNutritionPlan = {
-            id: id,
-            title: title,
-            meals: meals
-        }
-        const findClient = await Client.findOne({ user: clientId })
-        if (!findClient) {
-            return res.status(404).json({ errors: 'Client not found' })
-        }
-        if (findClient.coach._id.toString() !== req.user.id.toString()) {
-            return res.status(404).json({ errors: "You are not authorized to add this client's mealPlans" })
-        }
+// nutritionPlanCtrl.addMealPlans = async (req, res) => {
+//     try {
+//         const errors = validationResult(req)
+//         if (!errors.isEmpty()) {
+//             return res.status(400).json({ errors: errors.array() })
+//         }
+//         const { title, meals } = req.body
+//         const clientId = req.params.clientId
+//         const id = uuidv4()
+//         const addToNutritionPlan = {
+//             id: id,
+//             title: title,
+//             meals: meals
+//         }
+//         const findClient = await Client.findOne({ user: clientId })
+//         if (!findClient) {
+//             return res.status(404).json({ errors: 'Client not found' })
+//         }
+//         if (findClient.coach._id.toString() !== req.user.id.toString()) {
+//             return res.status(404).json({ errors: "You are not authorized to add this client's mealPlans" })
+//         }
 
-        const updateNutritionPlan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $push: { mealPlans: addToNutritionPlan } }, { new: true })
-        res.status(201).json(updateNutritionPlan)
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
+//         const updateNutritionPlan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $push: { mealPlans: addToNutritionPlan } }, { new: true })
+//         res.status(201).json(updateNutritionPlan)
+//     } catch (err) {
+//         console.log(err)
+//         res.status(500).json({ errors: 'Something went wrong' })
+//     }
+// }
 
-nutritionPlanCtrl.updateMealPlans = async (req, res) => {
-    try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() })
-        }
-        const { title, meals } = req.body
-        const { clientId, mealPlansId } = req.params
+// nutritionPlanCtrl.updateMealPlans = async (req, res) => {
+//     try {
+//         const errors = validationResult(req)
+//         if (!errors.isEmpty()) {
+//             return res.status(400).json({ errors: errors.array() })
+//         }
+//         const { title, meals } = req.body
+//         const { clientId, mealPlansId } = req.params
 
-        const findClient = await Client.findOne({ user: clientId })
-        if (!findClient) {
-            return res.status(404).json({ errors: 'Client not found' })
-        }
-        if (findClient.coach._id.toString() !== req.user.id.toString()) {
-            return res.status(404).json({ errors: "You are not authorized to update this client's mealPlans" })
-        }
-        const nutritionPlan = await NutritionPlan.findOne({ client: clientId })
-        if (!nutritionPlan) {
-            return res.status(404).json({ errors: 'Nutrition plan not found' })
-        }
-        const sessionIndex = nutritionPlan.mealPlans.findIndex((ele) => {
-            return ele.id === mealPlansId
-        })
-        if (sessionIndex === -1) {
-            return res.status(404).json({ errors: 'Meal Plans ID not found' })
-        }
-        nutritionPlan.mealPlans[sessionIndex].title = title
-        nutritionPlan.mealPlans[sessionIndex].meals = meals
+//         const findClient = await Client.findOne({ user: clientId })
+//         if (!findClient) {
+//             return res.status(404).json({ errors: 'Client not found' })
+//         }
+//         if (findClient.coach._id.toString() !== req.user.id.toString()) {
+//             return res.status(404).json({ errors: "You are not authorized to update this client's mealPlans" })
+//         }
+//         const nutritionPlan = await NutritionPlan.findOne({ client: clientId })
+//         if (!nutritionPlan) {
+//             return res.status(404).json({ errors: 'Nutrition plan not found' })
+//         }
+//         const sessionIndex = nutritionPlan.mealPlans.findIndex((ele) => {
+//             return ele.id === mealPlansId
+//         })
+//         if (sessionIndex === -1) {
+//             return res.status(404).json({ errors: 'Meal Plans ID not found' })
+//         }
+//         nutritionPlan.mealPlans[sessionIndex].title = title
+//         nutritionPlan.mealPlans[sessionIndex].meals = meals
 
-        await nutritionPlan.save()
-        res.status(200).json(nutritionPlan)
-    } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
+//         await nutritionPlan.save()
+//         res.status(200).json(nutritionPlan)
+//     } catch (err) {
+//         res.status(500).json({ errors: 'Something went wrong' })
+//     }
+// }
 
-nutritionPlanCtrl.deleteMealPlans = async (req, res) => {
-    try {
-        const { clientId, mealPlansId } = req.params
-        const findClient = await Client.findOne({ user: clientId })
-        if (!findClient) {
-            return res.status(404).json({ errors: 'Client not found' })
-        }
-        if (findClient.coach._id.toString() !== req.user.id.toString()) {
-            return res.status(404).json({ errors: "You are not authorized to delete this client's meal plan" })
-        }
-        const nutritionPlan = await NutritionPlan.findOne({ client: clientId })
-        if (!nutritionPlan) {
-            res.status(404).json({ errors: 'Nutrition plan not found' })
-        }
-        const mealPlanExists = nutritionPlan.mealPlans.find((ele) => {
-            return ele.id === mealPlansId
-        })
-        if (!mealPlanExists) {
-            return res.status(404).json({ errors: 'Meal plan not found' })
-        }
-        const deleteMealPLan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $pull: { mealPlans: { id: mealPlansId } } }, { new: true })
-        res.status(201).json(deleteMealPLan)
-    } catch (err) {
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
+// nutritionPlanCtrl.deleteMealPlans = async (req, res) => {
+//     try {
+//         const { clientId, mealPlansId } = req.params
+//         const findClient = await Client.findOne({ user: clientId })
+//         if (!findClient) {
+//             return res.status(404).json({ errors: 'Client not found' })
+//         }
+//         if (findClient.coach._id.toString() !== req.user.id.toString()) {
+//             return res.status(404).json({ errors: "You are not authorized to delete this client's meal plan" })
+//         }
+//         const nutritionPlan = await NutritionPlan.findOne({ client: clientId })
+//         if (!nutritionPlan) {
+//             res.status(404).json({ errors: 'Nutrition plan not found' })
+//         }
+//         const mealPlanExists = nutritionPlan.mealPlans.find((ele) => {
+//             return ele.id === mealPlansId
+//         })
+//         if (!mealPlanExists) {
+//             return res.status(404).json({ errors: 'Meal plan not found' })
+//         }
+//         const deleteMealPLan = await NutritionPlan.findOneAndUpdate({ client: clientId }, { $pull: { mealPlans: { id: mealPlansId } } }, { new: true })
+//         res.status(201).json(deleteMealPLan)
+//     } catch (err) {
+//         res.status(500).json({ errors: 'Something went wrong' })
+//     }
+// }
 
 module.exports = nutritionPlanCtrl
