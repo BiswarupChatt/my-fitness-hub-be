@@ -1,17 +1,17 @@
-nutritionPlanCtrl = {}
-const { v4: uuidv4 } = require('uuid')
+
 const Client = require('../models/client-model')
 const { validationResult } = require('express-validator')
-const NutritionPlan = require('../models/nutritionPlan-model')
+const MealPlan = require('../models/mealPlan-model')
+mealPlanCtrl = {}
 
 
-nutritionPlanCtrl.create = async (req, res) => {
+mealPlanCtrl.create = async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
     }
     try {
-        const { mealPlans, additionalNotes } = req.body
+        const { foods, additionalNotes, title } = req.body
         const client = req.params.clientId
         const coach = req.user.id
 
@@ -24,44 +24,31 @@ nutritionPlanCtrl.create = async (req, res) => {
             return res.status(400).json({ errors: "You are not authorized to create" })
         }
 
-        const exists = await NutritionPlan.findOne({ client: client })
-
-        mealPlans.forEach((ele) => {
-            if (!ele.id) {
-                ele.id = uuidv4()
-            }
+        const mealPlan = new MealPlan({
+            client: client,
+            coach: coach,
+            foods,
+            additionalNotes,
+            title
         })
+        await mealPlan.save()
+        res.status(201).json(mealPlan)
 
-        if (exists) {
-            exists.mealPlans = mealPlans;
-            exists.additionalNotes = additionalNotes;
-            await exists.save();
-            return res.status(200).json(exists)
-        } else {
-            const nutritionPlan = new NutritionPlan({
-                client: client,
-                coach: coach,
-                mealPlans: mealPlans,
-                additionalNotes: additionalNotes
-            })
-            await nutritionPlan.save()
-            res.status(201).json(nutritionPlan)
-        }
     } catch (err) {
         console.log(err)
-        res.status(500).json({ errors: 'Something went wrong 1', err })
+        res.status(500).json({ errors: 'Something went wrong during creating meal plan', err })
     }
 }
 
-nutritionPlanCtrl.get = async (req, res) => {
+mealPlanCtrl.get = async (req, res) => {
     try {
         let client
         if (req.user.role === 'coach' || req.user.role === 'admin') {
             client = req.params.clientId
-        } 
-        // else {
-        //     client = req.user.id
-        // }
+        }
+        else {
+            client = req.user.id
+        }
 
         console.log(`Fetching client with ID: ${client}`)
 
@@ -70,13 +57,12 @@ nutritionPlanCtrl.get = async (req, res) => {
             console.log(`Client not found for ID: ${client}`)
             return res.status(404).json({ errors: 'Client not found / Please provide client id to the params' })
         }
-        if (req.user.role === 'coach' && findClient.coach._id.toString() !== req.user.id.toString()) {
+        if (req.user.role === 'coach' || req.user.role === 'admin' && findClient.coach._id.toString() !== req.user.id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to view this client's Nutrition plan" })
         }
 
-        const nutritionPlan = await NutritionPlan.findOne({ client: client }).populate({
-            path: 'mealPlans.foods.foodId', model: 'FoodItem'
-        }).populate('client coach')
+        const nutritionPlan = await MealPlan.find({ client: client }).populate({path: 'foods.foodId', model: 'FoodItem'}).populate('client coach')
+
         if (!nutritionPlan) {
             return res.status(404).json({ errors: 'Nutrition plan not found' })
         }
@@ -87,7 +73,7 @@ nutritionPlanCtrl.get = async (req, res) => {
     }
 }
 
-// nutritionPlanCtrl.updateAdditionalNotes = async (req, res) => {
+// mealPlanCtrl.updateAdditionalNotes = async (req, res) => {
 //     try {
 //         const clientId = req.params.clientId
 //         const { additionalNotes } = req.body
@@ -109,7 +95,7 @@ nutritionPlanCtrl.get = async (req, res) => {
 //     }
 // }
 
-// nutritionPlanCtrl.addMealPlans = async (req, res) => {
+// mealPlanCtrl.addMealPlans = async (req, res) => {
 //     try {
 //         const errors = validationResult(req)
 //         if (!errors.isEmpty()) {
@@ -139,7 +125,7 @@ nutritionPlanCtrl.get = async (req, res) => {
 //     }
 // }
 
-// nutritionPlanCtrl.updateMealPlans = async (req, res) => {
+// mealPlanCtrl.updateMealPlans = async (req, res) => {
 //     try {
 //         const errors = validationResult(req)
 //         if (!errors.isEmpty()) {
@@ -175,7 +161,7 @@ nutritionPlanCtrl.get = async (req, res) => {
 //     }
 // }
 
-// nutritionPlanCtrl.deleteMealPlans = async (req, res) => {
+// mealPlanCtrl.deleteMealPlans = async (req, res) => {
 //     try {
 //         const { clientId, mealPlansId } = req.params
 //         const findClient = await Client.findOne({ user: clientId })
@@ -202,4 +188,4 @@ nutritionPlanCtrl.get = async (req, res) => {
 //     }
 // }
 
-module.exports = nutritionPlanCtrl
+module.exports = mealPlanCtrl

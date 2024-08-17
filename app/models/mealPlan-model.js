@@ -7,6 +7,10 @@ const foodSchema = new Schema({
         ref: "FoodItem",
         required: true
     },
+    foodName: {
+        type: String,
+        required: true
+    },
     unit: {
         type: String,
         required: true
@@ -19,15 +23,15 @@ const foodSchema = new Schema({
         type: Number,
         required: true
     },
-    carbohydrate: {
-        type: Number,
-        required: true
-    },
     protein: {
         type: Number,
         required: true
     },
     fat: {
+        type: Number,
+        required: true
+    },
+    carbohydrate: {
         type: Number,
         required: true
     },
@@ -38,19 +42,6 @@ const foodSchema = new Schema({
 }, { _id: false })
 
 const mealPlanSchema = new Schema({
-    id: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    title: {
-        type: String,
-        required: true
-    },
-    foods: [foodSchema]
-}, { timestamps: true, _id: false })
-
-const nutritionPlanSchema = new Schema({
     client: {
         type: Schema.Types.ObjectId,
         ref: "User",
@@ -61,13 +52,18 @@ const nutritionPlanSchema = new Schema({
         ref: "User",
         required: true
     },
+    title: {
+        type: String,
+        required: true
+    },
     additionalNotes: {
         type: String,
         default: ''
     },
-    mealPlans: [mealPlanSchema]
-})
+    foods: [foodSchema]
+}, { timestamps: true })
 
-const NutritionPlan = model('NutritionPlan', nutritionPlanSchema)
 
-module.exports = NutritionPlan
+const MealPlan = model('MealPlan', mealPlanSchema)
+
+module.exports = MealPlan

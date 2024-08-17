@@ -13,7 +13,7 @@ const answerCtrl = require('./app/controllers/answer-ctrl')
 const workoutCtrl = require('./app/controllers/workout-ctrl')
 const foodItemCtrl = require('./app/controllers/foodItem-ctrl')
 const trainingPlanCtrl = require('./app/controllers/trainingPlan-ctrl')
-const nutritionPlanCtrl = require('./app/controllers/nutritionPlan-ctrl')
+const mealPlanCtrl = require('./app/controllers/mealPlan-ctrl')
 const progressCtrl = require('./app/controllers/progress-ctrl')
 const programCtrl = require('./app/controllers/program-ctrl')
 const subscriptionCtrl = require('./app/controllers/subscription-ctrl')
@@ -26,7 +26,7 @@ const { answerValidations, answerUpdateValidations } = require('./app/validation
 const { workoutValidation } = require('./app/validations/workout-validations')
 const { foodItemValidation } = require('./app/validations/foodItem-validation')
 const { trainingPlanValidations, workoutSessionValidation } = require('./app/validations/trainingPlan-validations')
-const { nutritionPlanValidation, mealPlansValidations } = require('./app/validations/nutritionPlan-validation')
+const { mealPlanValidation } = require('./app/validations/mealPlan-validation')
 const { progressValidation, progressUpdateValidation } = require('./app/validations/progress-validations')
 const { programValidation } = require('./app/validations/program-validations')
 
@@ -102,15 +102,9 @@ app.put('/training-plan/:clientId/updateWorkoutSession/:workoutSessionId', authe
 app.delete('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', authenticateUser, authorizeUser(['coach', 'admin']), trainingPlanCtrl.deleteWorkoutSession)
 
 
-// app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
+app.post('/meal-plan/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlanValidation), mealPlanCtrl.create)
+app.get('/meal-plan/:clientId?', authenticateUser, mealPlanCtrl.get)
 
-app.post('/nutrition-plan/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(nutritionPlanValidation), nutritionPlanCtrl.create)
-app.get('/nutrition-plan/:clientId?', authenticateUser, nutritionPlanCtrl.get)
-
-// app.put('/nutrition-plan/:clientId/updateAdditionalNotes', authenticateUser, authorizeUser(['coach', 'admin']), nutritionPlanCtrl.updateAdditionalNotes)
-// app.post('/nutrition-plan/:clientId/addMealPlan', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlansValidations), nutritionPlanCtrl.addMealPlans)
-// app.put('/nutrition-plan/:clientId/updateMealPlan/:mealPlansId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlansValidations), nutritionPlanCtrl.updateMealPlans)
-// app.delete('/nutrition-plan/:clientId/deleteMealPlans/:mealPlansId', authenticateUser, authorizeUser(['coach', 'admin']), nutritionPlanCtrl.deleteMealPlans)
 
 
 app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
