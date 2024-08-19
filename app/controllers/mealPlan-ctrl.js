@@ -61,7 +61,7 @@ mealPlanCtrl.get = async (req, res) => {
             return res.status(404).json({ errors: "You are not authorized to view this client's Nutrition plan" })
         }
 
-        const nutritionPlan = await MealPlan.find({ client: client }).populate({path: 'foods.foodId', model: 'FoodItem'}).populate('client coach')
+        const nutritionPlan = await MealPlan.find({ client: client }).populate({ path: 'foods.foodId', model: 'FoodItem' }).populate('client coach')
 
         if (!nutritionPlan) {
             return res.status(404).json({ errors: 'Nutrition plan not found' })
@@ -72,6 +72,28 @@ mealPlanCtrl.get = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong 2', err })
     }
 }
+
+mealPlanCtrl.delete = async (req, res) => {
+    try {
+        const { mealPlanId } = req.params;
+        const mealPlan = await MealPlan.findById(mealPlanId);
+
+        if (!mealPlan) {
+            return res.status(404).json({ errors: "Meal plan not found" });
+        }
+
+        if (mealPlan.coach._id.toString() !== req.user.id.toString()) {
+            return res.status(403).json({ errors: "You are not authorized to delete this client's meal plan" });
+        }
+
+        const deletedMealPlan = await MealPlan.findByIdAndDelete(mealPlanId);
+        return res.status(200).json(deletedMealPlan);
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ errors: 'Something went wrong.', err });
+    }
+}
+
 
 // mealPlanCtrl.updateAdditionalNotes = async (req, res) => {
 //     try {

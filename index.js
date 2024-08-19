@@ -104,7 +104,7 @@ app.delete('/training-plan/:clientId/deleteWorkoutSession/:workoutSessionId', au
 
 app.post('/meal-plan/:clientId', authenticateUser, authorizeUser(['coach', 'admin']), checkSchema(mealPlanValidation), mealPlanCtrl.create)
 app.get('/meal-plan/:clientId?', authenticateUser, mealPlanCtrl.get)
-
+app.delete('/meal-plan/delete/:mealPlanId', authenticateUser, authorizeUser(['coach', 'admin']), mealPlanCtrl.delete)
 
 
 app.post('/progress', authenticateUser, authorizeUser(['client']), checkSchema(progressValidation), progressCtrl.create)
