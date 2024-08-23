@@ -4,6 +4,9 @@ const cors = require('cors')
 const morgan = require('morgan')
 const express = require('express')
 const { checkSchema } = require('express-validator')
+const cron = require('node-cron')
+
+const updateCoachSubscriptionStatus = require('./app/jobs/updateCoachSubscriptionStatus')
 
 const userCtrl = require('./app/controllers/user-ctrl')
 const coachCtrl = require('./app/controllers/coach-ctrl')
@@ -46,6 +49,11 @@ app.use(express.json())
 app.use(morgan('combined'))
 app.use(cors())
 
+
+cron.schedule('* 2 * * *', () => {
+    updateCoachSubscriptionStatus()
+    console.log('Running subscription status update job...')
+})
 
 app.get('/users/account', authenticateUser, userCtrl.getAccount)
 // app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)

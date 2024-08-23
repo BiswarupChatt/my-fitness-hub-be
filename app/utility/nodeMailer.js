@@ -178,4 +178,21 @@ const sendInvitationEmail = (email, token, coachFirstName, coachLastName) => {
     })
 }
 
-module.exports = { welcomeEmail, forgetPasswordMail, sendInvitationEmail }
+const coachSubscriptionStatusEmail = (modifiedCount, time) => {
+    const mailBody = {
+        from: process.env.NODEMAILER_EMAIL,
+        to: process.env.NODEMAILER_EMAIL,
+        subject: `${modifiedCount} No Coaches Modified on ${time}`,
+        html: `${modifiedCount} No Coaches Modified on ${time}`
+    }
+
+    transporter.sendMail(mailBody, (error, info) => {
+        if (error) {
+            console.log('Error While sending Registration Email', error.message)
+        } else {
+            console.log('Registration Email sent successfully', info.response)
+        }
+    })
+}
+
+module.exports = { welcomeEmail, forgetPasswordMail, sendInvitationEmail, coachSubscriptionStatusEmail }
