@@ -65,20 +65,19 @@ const updateCoachPaymentDetails = async (coachId, plan) => {
 
         if (coach.payment.isActive === true) {
             startDate = moment(coach.payment.startDate)
-            if (plan === 'monthly') {
+            if (plan === 'Monthly Subscription') {
                 endDate = moment(coach.payment.endDate).add(1, 'month')
-            } else if (plan === 'yearly') {
+            } else if (plan === 'Yearly Subscription') {
                 endDate = moment(coach.payment.endDate).add(1, 'year')
             }
         } else {
             startDate = currentDate
-            if (plan === 'monthly') {
+            if (plan === 'Monthly Subscription') {
                 endDate = currentDate.clone().add(1, 'month')
-            } else if (plan === 'yearly') {
+            } else if (plan === 'Yearly Subscription') {
                 endDate = currentDate.clone().add(1, 'year')
             }
         }
-
         const coachModelUpdate = await Coach.findOneAndUpdate(
             { user: coachId },
             {
@@ -93,7 +92,38 @@ const updateCoachPaymentDetails = async (coachId, plan) => {
         }
         return { status: 201, data: coachModelUpdate }
     } catch (err) {
-        return { status: 500, errors: 'Something went wrong.' }
+        return { status: 500, errors: 'Something went wrong. Line 96', err }
+    }
+}
+
+subscriptionCtrl.verifyOrder = async (req, res) => {
+    const { order_id, payment_id, signature, coachId, status, plan } = req.body
+    try {
+        if (status === 'failed') {
+            const paymentResult = await paymentFailure(order_id)
+            return res.status(paymentResult.status).json({ errors: paymentResult.errors })
+        }
+
+        const compareSignature = generateSignature(order_id, payment_id)
+
+        if (compareSignature === signature) {
+            const subscriptionResult = await updateSubscriptionSuccess(order_id, payment_id)
+
+            if (subscriptionResult.status !== 200) {
+                return res.status(subscriptionResult.status).json({ errors: subscriptionResult.errors })
+            }
+
+            const coachResult = await updateCoachPaymentDetails(coachId, plan);
+            return res.status(coachResult.status).json(
+                coachResult.status === 201 ? { status: "Payment Successful" } : { errors: coachResult.errors }
+            );
+        } else {
+            const paymentResult = await paymentFailure(order_id)
+            return res.status(400).json({ errors: paymentResult.errors })
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ errors: 'Something went wrong.', err })
     }
 }
 
@@ -104,9 +134,7 @@ subscriptionCtrl.createOrder = async (req, res) => {
         currency: "INR",
         receipt: `receipt-${moment().format('YYYYMMDD-HHmmss')}-${crypto.randomBytes(3).toString('hex')}`,
         notes: {
-            //todo need modification in coachId
-            // coachId: req.user.id,
-            coachId: '6686c25a24c5ecd12b7e5c4b',
+            coachId: req.user.id,
             plan: plan
         }
     }
@@ -114,9 +142,7 @@ subscriptionCtrl.createOrder = async (req, res) => {
     try {
         const order = await razorpayInstance.orders.create(options)
         const subscriptionData = {
-            //todo need modification in coachId
-            // coach: req.user.id,
-            coach: '6686c25a24c5ecd12b7e5c4b',
+            coach: req.user.id,
             paymentId: '',
             orderId: order.id,
             amount: amount,
@@ -129,39 +155,6 @@ subscriptionCtrl.createOrder = async (req, res) => {
     } catch (err) {
         console.log(err)
         res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
-
-subscriptionCtrl.verifyOrder = async (req, res) => {
-    const { order_id, payment_id, signature, coachId, status, plan } = req.body
-    try {
-        if (status === 'failed') {
-            const paymentResult = await paymentFailure(order_id)
-            console.log("1")
-            return res.status(paymentResult.status).json({ errors: paymentResult.errors })
-        }
-
-        const compareSignature = generateSignature(order_id, payment_id)
-        if (compareSignature === signature) {
-            const subscriptionResult = await updateSubscriptionSuccess(order_id, payment_id)
-            console.log("2")
-            if (subscriptionResult.status !== 200) {
-                return res.status(subscriptionResult.status).json({ errors: subscriptionResult.errors })
-            }
-
-            const coachResult = await updateCoachPaymentDetails(coachId, plan)
-            console.log("3")
-            return res.status(coachResult.status).json(
-                coachResult.status === 201 ? { status: "Payment Successful" } : { errors: coachResult.errors }
-            )
-        }else{
-            const paymentResult = await handlePaymentFailure(order_id)
-            console.log("4")
-            return res.status(400).json({ errors: paymentResult.errors })
-        }
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ errors: 'Something went wrong.' })
     }
 }
 
