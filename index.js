@@ -134,7 +134,7 @@ app.post('/subscription/verify-signature', subscriptionCtrl.verifyOrder)
 
 
 app.get('/', (req, res) => {
-    res.send('hello admin i am your backend, how is your coding going?')
+    res.send('Backend reporting for duty! Ready to make some magic happen?')
 })
 
 app.listen(port, localNetwork, () => {
