@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator')
+const path = require('path');
 console.log('Attempting to require FoodItem model...');
-const FoodItem = require('../models/foodItem-model');
+const FoodItem = require(path.resolve(__dirname, '../models/foodItem-model'));
 console.log('FoodItem model required successfully:', FoodItem);
 const foodItemCtrl = {}
 
