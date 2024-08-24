@@ -1,6 +1,6 @@
 const foodItemCtrl = {}
-import FoodItem, { find, countDocuments, findById, findByIdAndUpdate, findByIdAndDelete } from '../models/foodItem-model'
-import { validationResult } from 'express-validator'
+const FoodItem = require('../models/')
+const { validationResult } = require('express-validator')
 
 
 foodItemCtrl.create = async (req, res) => {
@@ -54,19 +54,22 @@ foodItemCtrl.get = async (req, res) => {
         let totalFoodItems
 
         if (userFoodItem === 'true') {
-            foodItems = await find({ ...searchQuery, coach: req.user.id })
+            foodItems = await FoodItem
+                .find({ ...searchQuery, coach: req.user.id })
                 .populate('coach')
                 .sort(sortOption)
                 .skip((page - 1) * limit)
                 .limit(parseInt(limit))
 
-            totalFoodItems = await countDocuments({ ...searchQuery, coach: req.user.id })
+            totalFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id })
         } else {
-            const defaultFoodItems = await find({ ...searchQuery, isDefault: true })
+            const defaultFoodItems = await FoodItem
+                .find({ ...searchQuery, isDefault: true })
                 .populate('coach')
                 .sort(sortOption)
 
-            const coachFoodItems = await find({ ...searchQuery, coach: req.user.id })
+            const coachFoodItems = await FoodItem
+                .find({ ...searchQuery, coach: req.user.id })
                 .populate('coach')
                 .sort(sortOption)
 
@@ -83,8 +86,8 @@ foodItemCtrl.get = async (req, res) => {
 
             foodItems = combinedFoodItems.slice((page - 1) * limit, page * limit)
 
-            const totalDefaultFoodItems = await countDocuments({ ...searchQuery, isDefault: true })
-            const totalCoachFoodItems = await countDocuments({ ...searchQuery, coach: req.user.id })
+            const totalDefaultFoodItems = await FoodItem.countDocuments({ ...searchQuery, isDefault: true })
+            const totalCoachFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id })
             totalFoodItems = totalDefaultFoodItems + totalCoachFoodItems
         }
 
@@ -117,14 +120,14 @@ foodItemCtrl.update = async (req, res) => {
             fat: req.body.fat,
             carbohydrates: req.body.carbohydrates
         }
-        const foodItem = await findById(req.params._id)
+        const foodItem = await FoodItem.findById(req.params._id)
         if (!foodItem) {
             return res.status(404).json({ errors: "Food item not found" })
         }
         if (req.user.id.toString() !== foodItem.coach._id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to update" })
         }
-        const updatedFoodItem = await findByIdAndUpdate(req.params._id, body, { new: true })
+        const updatedFoodItem = await FoodItem.findByIdAndUpdate(req.params._id, body, { new: true })
         res.status(201).json(updatedFoodItem)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
@@ -133,18 +136,18 @@ foodItemCtrl.update = async (req, res) => {
 
 foodItemCtrl.delete = async (req, res) => {
     try {
-        const foodItem = await findById(req.params._id)
+        const foodItem = await FoodItem.findById(req.params._id)
         if (!foodItem) {
             return res.status(404).json({ errors: "Food item not found" })
         }
         if (req.user.id.toString() !== foodItem.coach._id.toString()) {
             return res.status(404).json({ errors: "You are not authorized to delete" })
         }
-        const deletedFoodItem = await findByIdAndDelete(req.params._id)
+        const deletedFoodItem = await FoodItem.findByIdAndDelete(req.params._id)
         res.status(201).json(deletedFoodItem)
     } catch (err) {
         res.status(500).json({ errors: 'Something went wrong' })
     }
 }
 
-export default foodItemCtrl
+module.exports = foodItemCtrl
