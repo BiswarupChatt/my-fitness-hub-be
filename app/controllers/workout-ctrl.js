@@ -1,5 +1,4 @@
 const workoutCtrl = {}
-const FoodItem = require('../models/foodItem-model')
 const WorkoutItem = require('../models/workout-model')
 const { validationResult } = require('express-validator')
 
