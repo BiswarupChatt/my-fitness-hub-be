@@ -49,10 +49,10 @@ app.use(morgan('combined'))
 app.use(cors())
 
 
-cron.schedule('* 2 * * *', () => {
-    updateCoachSubscriptionStatus()
-    console.log('Running subscription status update job...')
-})
+// cron.schedule('* 2 * * *', () => {
+//     updateCoachSubscriptionStatus()
+//     console.log('Running subscription status update job...')
+// })
 
 app.get('/users/account', authenticateUser, userCtrl.getAccount)
 // app.put('/users/account', authenticateUser, checkSchema(userUpdateValidation), userCtrl.updateAccount)
