@@ -41,7 +41,6 @@ const configureDB = require('./config/db')
 
 const app = express()
 const port = process.env.PORT || 4000
-// const localNetwork = process.env.NETWORK
 
 configureDB()
 
@@ -128,7 +127,6 @@ app.delete('/program/:_id', authenticateUser, authorizeUser(['coach', 'admin']),
 
 
 app.get('/subscription', authenticateUser, authorizeUser(['coach', 'admin']), subscriptionCtrl.get)
-//todo add authenticate user and authorize user below
 app.post('/subscription/create-order', authenticateUser, authorizeUser(['coach', 'admin']), subscriptionCtrl.createOrder)
 app.post('/subscription/verify-signature', subscriptionCtrl.verifyOrder)
 
