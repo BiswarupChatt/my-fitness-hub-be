@@ -41,4 +41,4 @@ const foodItemSchema = new Schema({
 })
 
 const FoodItem = model('FoodItem', foodItemSchema)
-module.exports = FoodItem
+module.exports = FoodItem;
