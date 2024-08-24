@@ -1,6 +1,6 @@
-const foodItemCtrl = {}
-const FoodItem = require('../models/')
 const { validationResult } = require('express-validator')
+const FoodItem = require('../models/foodItem-model')
+const foodItemCtrl = {}
 
 
 foodItemCtrl.create = async (req, res) => {
