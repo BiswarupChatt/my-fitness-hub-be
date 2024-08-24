@@ -1,5 +1,4 @@
 const foodItemCtrl = {}
-const { defaults } = require('lodash')
 const FoodItem = require('../models/foodItem-model')
 const { validationResult } = require('express-validator')
 
