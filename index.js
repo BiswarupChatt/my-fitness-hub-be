@@ -41,7 +41,7 @@ const configureDB = require('./config/db')
 
 const app = express()
 const port = process.env.PORT || 4000
-const localNetwork = process.env.NETWORK
+// const localNetwork = process.env.NETWORK
 
 configureDB()
 
@@ -137,6 +137,6 @@ app.get('/', (req, res) => {
     res.send('Backend reporting for duty! Ready to make some magic happen?')
 })
 
-app.listen(port, localNetwork, () => {
-    console.log(`Server is running successfully on this url http://${localNetwork}:${port}`)
+app.listen(port,  () => {
+    console.log(`Server is running successfully on this url http://localhost:${port}`)
 })
