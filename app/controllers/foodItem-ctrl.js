@@ -93,11 +93,9 @@ foodItemCtrl.get = async (req, res) => {
                 return 0;
             });
 
-            foodItems = uniqueFoodItems.slice((page - 1) * limit, page * limit);
 
-            const totalDefaultFoodItems = await FoodItem.countDocuments({ ...searchQuery, isDefault: true })
-            const totalCoachFoodItems = await FoodItem.countDocuments({ ...searchQuery, coach: req.user.id })
-            totalFoodItems = totalDefaultFoodItems + totalCoachFoodItems
+            foodItems = uniqueFoodItems.slice((page - 1) * limit, page * limit);
+            totalFoodItems = uniqueFoodItems.length;
         }
 
         return res.status(200).json({
