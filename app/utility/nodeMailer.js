@@ -158,7 +158,7 @@ const sendInvitationEmail = (email, token, coachFirstName, coachLastName) => {
                             <p>Click the button below to accept the invitation and start your journey towards a healthier lifestyle. Please note that this link is valid for 48 hours.</p>
                         </div>
                         <div class="button-container">
-                            <a href="http://localhost:3000/client-signup/${token}" class="button" style="color: #ffffff !important; background-color: #007bff; display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 5px; text-align: center;">Join Now</a>
+                            <a href="https://my-fitness-hub-fe.vercel.app//client-signup/${token}" class="button" style="color: #ffffff !important; background-color: #007bff; display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 5px; text-align: center;">Join Now</a>
                         </div>
                         <div class="footer">
                             <p>If you have any questions, feel free to reach out to us at support@myfitnesshub.com.</p>
