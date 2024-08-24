@@ -67,22 +67,30 @@ workoutCtrl.get = async (req, res) => {
                 .sort(sortOption)
 
             const [defaultWorkoutItems, coachWorkoutItems] = await Promise.all([defaultWorkoutItemsPromise, coachWorkoutItemsPromise])
+            
+            const combinedWorkoutItems = [...defaultWorkoutItems, ...coachWorkoutItems];
 
-            const combinedWorkoutItems = [...defaultWorkoutItems, ...coachWorkoutItems]
-            combinedWorkoutItems.sort((x, y) => {
+            const uniqueWorkoutItems = combinedWorkoutItems.reduce((acc, current) => {
+                const x = acc.find(item => item.exerciseName === current.exerciseName);
+                if (!x) {
+                    acc.push(current);
+                }
+                return acc;
+            }, []);
+
+            uniqueWorkoutItems.sort((x, y) => {
                 if (x[sortBy] < y[sortBy]) {
-                    return sortOrder === 'asc' ? -1 : 1
+                    return sortOrder === 'asc' ? -1 : 1;
                 }
                 if (x[sortBy] > y[sortBy]) {
-                    return sortOrder === 'asc' ? 1 : -1
+                    return sortOrder === 'asc' ? 1 : -1;
                 }
-                return 0
-            })
+                return 0;
+            });
 
-            workoutItems = combinedWorkoutItems.slice(skip, skip + parseInt(limit))
-            totalWorkoutItems = combinedWorkoutItems.length
+            workoutItems = uniqueWorkoutItems.slice(skip, skip + parseInt(limit));
+            totalWorkoutItems = uniqueWorkoutItems.length;
         }
-
         return res.status(200).json({
             workoutItems: workoutItems,
             totalWorkoutItems: totalWorkoutItems,
