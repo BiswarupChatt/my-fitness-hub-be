@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const express = require('express')
 const { checkSchema } = require('express-validator')
 const cron = require('node-cron')
+const moment = require('moment')
 
 const updateCoachSubscriptionStatus = require('./app/jobs/updateCoachSubscriptionStatus')
 
@@ -52,6 +53,10 @@ app.use(cors())
 cron.schedule('* 2 * * *', () => {
     updateCoachSubscriptionStatus()
     console.log('Running subscription status update job...')
+})
+
+cron.schedule('*/12 * * * * ', () => {
+    console.log('I am awake!', moment().format('Do MMMM YYYY, h:mm:ss a'))
 })
 
 app.get('/users/account', authenticateUser, userCtrl.getAccount)
@@ -135,6 +140,6 @@ app.get('/', (req, res) => {
     res.send('Backend reporting for duty! Ready to make some magic happen?')
 })
 
-app.listen(port,  () => {
+app.listen(port, () => {
     console.log(`Server is running successfully on this url http://localhost:${port}`)
 })
