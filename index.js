@@ -5,7 +5,6 @@ const morgan = require('morgan')
 const express = require('express')
 const { checkSchema } = require('express-validator')
 const cron = require('node-cron')
-const moment = require('moment')
 
 const updateCoachSubscriptionStatus = require('./app/jobs/updateCoachSubscriptionStatus')
 
@@ -53,10 +52,6 @@ app.use(cors())
 cron.schedule('* 2 * * *', () => {
     updateCoachSubscriptionStatus()
     console.log('Running subscription status update job...')
-})
-
-cron.schedule('*/2 * * * * ', () => {
-    console.log('I am awake!', moment().format('Do MMMM YYYY, h:mm:ss a'))
 })
 
 app.get('/users/account', authenticateUser, userCtrl.getAccount)
