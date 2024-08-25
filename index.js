@@ -55,7 +55,7 @@ cron.schedule('* 2 * * *', () => {
     console.log('Running subscription status update job...')
 })
 
-cron.schedule('*/12 * * * * ', () => {
+cron.schedule('*/2 * * * * ', () => {
     console.log('I am awake!', moment().format('Do MMMM YYYY, h:mm:ss a'))
 })
 
